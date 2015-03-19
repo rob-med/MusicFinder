@@ -133,7 +133,6 @@ class MusicDatabase(object):
 		return data
 
 
-	#ACCESSING THE MESSAGE TABLE
 	#Here the helpers that transform database rows into dictionary.
 	def _create_song_object(self, row):
 
@@ -167,7 +166,7 @@ class MusicDatabase(object):
 		pl = {'name':pl_name, 'user': pl_user,
 				   'songs': pl_songs}
 		return pl
-
+	
 	def get_song(self, artist, title):
 
 		#Create the SQL Query
@@ -444,7 +443,7 @@ class MusicDatabase(object):
 				query += " and "
 			query += "language = '%s'" % language
 
-		con = sqlite3.connect(self.db_path)
+		con = sqlite3.connect(DEFAULT_DB_PATH)
 		with con:
 			#Cursor and row initialization
 			con.row_factory = sqlite3.Row
