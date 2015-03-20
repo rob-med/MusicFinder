@@ -145,8 +145,8 @@ class Artists(Resource):
 class Artist(Resource):
 
 	def get(self, artist):
-		message_db = g.db.get_artist(artist)
-		if not message_db:
+		artist_db = g.db.get_artist(artist)
+		if not artist_db:
 			return create_error_response(404, "Unknown message",
 										 "There is no artist named %s" % artist,
 										 "Artist")
@@ -192,11 +192,11 @@ class Artist(Resource):
 		}
 
 		#Fill the rest of properties
-		envelope['name'] = message_db['name']
-		envelope['genre'] = message_db['genre']
-		envelope['country'] = message_db['country']
-		envelope['language'] = message_db['language']
-		envelope['formed_in'] = message_db['formed_in']
+		envelope['name'] = artist_db['name']
+		envelope['genre'] = artist_db['genre']
+		envelope['country'] = artist_db['country']
+		envelope['language'] = artist_db['language']
+		envelope['formed_in'] = artist_db['formed_in']
 		
 		#RENDER
 		return Response (json.dumps(envelope), 200, mimetype=HAL+";"+FORUM_MESSAGE_PROFILE)
@@ -258,7 +258,7 @@ class Song(Resource):
 		return
 class Playlist(Resource):
 
-	def get(self):
+	def get(self, nickname, title):
 		return
 	
 	def post(self):
@@ -270,18 +270,177 @@ class Playlist_songs(Resource):
 	
 	def post(self):
 		return
-class User(Resource):
+class Users(Resource):
 
 	def get(self):
-		return
+				#PERFORM OPERATIONS
+			#Create the messages list
+			users_db = g.db.get_users()
+
+		   #FILTER AND GENERATE THE RESPONSE
+		   #Create the envelope
+			envelope = {}
+			collection = {}
+			envelope["collection"] = collection
+			collection['version'] = "1.0"
+			collection['href'] = api.url_for(Users)
+			collection['links'] = [{'prompt':'List of all artists in the Finder', 
+								  'rel':'artists-all',
+								  'href': api.url_for(Artists)}
+								]
+			collection['template'] = {
+			  "data" : [
+				{"prompt" : "Insert nickname", "name" : "nickname",
+				 "value" : "", "required":True},
+				{"prompt" : "Insert password", "name" : "password",
+				 "object" : {}, "required":False},
+				{"prompt" : "Insert user gender", "name" : "gender",
+				 "value" : "", "required":False},
+				{"prompt" : "Insert user country", "name" : "country",
+				 "value" : "", "required":False},
+				{"prompt" : "Insert user age", "name" : "age",
+				 "value" : "", "required":False}
+
+			  ]
+			}
+			#Create the items
+			items = []
+			for user in users_db: 
+				print user
+				_nickname = user['nickname']
+				_gender = user['gender']
+				_country = user['country']
+				_age = user['age']
+				
+				_url = api.url_for(User, nickname=_nickname)
+				_playlist_url = api.url_for(User_playlists, nickname=_nickname)
+				user = {}
+				user['href'] = _url
+				user['read-only'] = True
+				user['data'] = []
+				value = {'name':'nickname', 'value':_nickname}
+				user['data'].append(value)
+				value = {'name':'gender', 'value':_gender}
+				user['data'].append(value)
+				value = {'name':'country', 'value':_country}
+				user['data'].append(value)
+				value = {'name':'age', 'value':_age}
+				user['data'].append(value)
+
+				user['links'] = [{
+									 'href':_playlist_url,
+									 'rel':"playlists",
+									 'name':"playlists",
+									 'prompt':"Playlists of user"
+									}]
+				items.append(user)
+			collection['items'] = items
+			#RENDER
+			return envelope
+
 	
 	def post(self):
 		return
+		
+class User(Resource):
+
+	def get(self, nickname):
+		user_db = g.db.get_user(nickname)
+		if not user_db:
+			return create_error_response(404, "Unknown message",
+										 "There is no user named %s" % nickname,
+										 "User")
+		#FILTER AND GENERATE RESPONSE
+		#Create the envelope:
+		envelope = {}
+		#Now create the links
+		links = {}
+		envelope["_links"] = links
+
+		#Fill the links
+		_curies = [
+			{
+				"name": "user",
+				"href": FORUM_MESSAGE_PROFILE,
+			},
+			{
+				"name": "atom-thread",
+				"href": ATOM_THREAD_PROFILE
+			}
+		]
+		links['curies'] = _curies
+		links['self'] = {'href':api.url_for(User, nickname=nickname),
+						 'profile': FORUM_MESSAGE_PROFILE}
+		links['collection'] = {'href':api.url_for(Users),
+							   'profile': FORUM_MESSAGE_PROFILE,
+							   'type':COLLECTIONJSON}
+		#Extract the author and add the link
+		#If sender is not Anonymous extract the nickname from message_db. The link
+		# exist but its href points to None.
+		#Extract the parent and add the corresponding link
+		
+		#Fill the template
+		envelope['template'] = {
+		  "data" : [
+			{"prompt" : "", "name" : "nickname", "value" : "", "required":True},
+			{"prompt" : "", "name" : "gender", "value" : "", "required":False},
+			{"prompt" : "", "name" : "country", "value" : "", "required":False},
+			{"prompt" : "", "name" : "age", "value" : "", "required":False}
+			]
+		}
+
+		#Fill the rest of properties
+		envelope['nickname'] = user_db['nickname']
+		envelope['gender'] = user_db['gender']
+		envelope['country'] = user_db['country']
+		envelope['age'] = user_db['age']
+		
+		#RENDER
+		return Response (json.dumps(envelope), 200, mimetype=HAL+";"+FORUM_MESSAGE_PROFILE)
+
+	def post(self):
+		return
+
+
 class User_playlists(Resource):
 
-	def get(self):
-		return
-	
+	def get(self, nickname):
+		pl_db = g.db.get_playlists(nickname)
+
+		envelope = {}
+		collection = {}
+		envelope["collection"] = collection
+		collection['version'] = "1.0"
+		collection['href'] = api.url_for(User_playlists, nickname=nickname)
+		collection['template'] = {
+		  "data" : [
+			{"prompt" : "", "name" : "name", "value" : "", "required":True},
+			{"prompt" : "", "name" : "user", "value" : "", "required":True},
+			{"prompt" : "", "name" : "created_on", "value" : "", "required":False}			
+		  ]
+		}
+		#Create the items
+		items = []
+		for a in pl_db: 
+			_title = a['name']
+			_user = a['user']
+			_created_on = a['created_on']
+			_url = api.url_for(Playlist, nickname=_user, title=_title)
+			pl = {}
+			pl['href'] = _url
+			pl['data'] = []
+			value = {'name':'name', 'value':_title}
+			pl['data'].append(value)
+			value = {'name':'user', 'value':_user}
+			pl['data'].append(value)
+			value = {'name':'created_on', 'value':_created_on}
+			pl['data'].append(value)
+			
+			pl['links'] = []
+			items.append(pl)
+		collection['items'] = items
+		return envelope
+
 	def post(self):
 		return
 
@@ -295,6 +454,8 @@ api.add_resource(Songs, '/musicfinder/api/artists/<artist>/songs/',
                  endpoint='songs')
 api.add_resource(Song, '/musicfinder/api/artists/<artist>/songs/<title>',
                  endpoint='song')
+api.add_resource(Users, '/musicfinder/api/users/',
+                 endpoint='users')
 api.add_resource(User, '/musicfinder/api/users/<nickname>/',
                  endpoint='user')
 api.add_resource(User_playlists, '/musicfinder/api/users/<nickname>/playlists/',

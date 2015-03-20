@@ -162,11 +162,22 @@ class MusicDatabase(object):
 
 		pl_name = row['name']
 		pl_user = row['user']
+		pl_created = row['created_on']
+
 		pl_songs = row['songs']
 		pl = {'name':pl_name, 'user': pl_user,
-				   'songs': pl_songs}
+				   'songs': pl_songs, 'created_on': pl_created}
 		return pl
-	
+	def _create_user_object(self, row):
+
+		name = row['nickname']
+		gender = row['gender']
+		age = row['age']
+		country = row['country']
+		user = {'nickname':name, 'gender': gender,
+				   'age': age, 'country':country}
+		return user
+
 	def get_song(self, artist, title):
 
 		#Create the SQL Query
@@ -190,6 +201,30 @@ class MusicDatabase(object):
 				return None
 			#Build the return object
 			return self._create_song_object(row)
+			
+	def get_user(self, nickname):
+
+		#Create the SQL Query
+		keys_on = 'PRAGMA foreign_keys = ON'
+		query = 'SELECT * FROM users WHERE nickname = ?'
+		#Connects to the database. Gets a connection object
+		con = sqlite3.connect(self.db_path)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)        
+			#Execute main SQL Statement
+			pvalue = (nickname,)
+			cur.execute(query, pvalue)
+			#Process the response.
+			#Just one row is expected
+			row = cur.fetchone()
+			if row is None:
+				return None
+			#Build the return object
+			return self._create_user_object(row)
 
 
 	def get_songs(self, artist):
@@ -245,7 +280,7 @@ class MusicDatabase(object):
 	def get_playlists(self, user):
 				#Create the SQL Query
 		keys_on = 'PRAGMA foreign_keys = ON'
-		query = 'SELECT name, user, count(song) as songs FROM playlists, song_in_playlist where playlists.user = ? and playlists.name = song_in_playlist.pl_name and playlists.user = song_in_playlist.pl_user'
+		query = 'SELECT name, user, created_on, count(song) as songs FROM playlists, song_in_playlist where playlists.user = ? and playlists.name = song_in_playlist.pl_name and playlists.user = song_in_playlist.pl_user'
 		#Connects to the database. Gets a connection object
 		con = sqlite3.connect(self.db_path)
 		with con:
@@ -421,7 +456,32 @@ class MusicDatabase(object):
 				return None
 			#Build the return object
 			return self._create_artist_object(row)
+	
+	def get_users(self):
+        #Create the SQL Statement
+		keys_on = 'PRAGMA foreign_keys = ON'
+		query = 'SELECT * FROM users'
+		  #Nickname restriction
 
+		con = sqlite3.connect(DEFAULT_DB_PATH)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)
+			#Execute main SQL Statement        
+			cur.execute(query)
+			#Get results
+			rows = cur.fetchall()
+			if rows is None:
+				return None
+			#Build the return object
+			users = []    
+			for row in rows:
+				u = self._create_user_object(row)
+				users.append(u)
+			return users
 
 	def get_artists(self, genre = None, country = None, language = None):
         #Create the SQL Statement
