@@ -164,9 +164,8 @@ class MusicDatabase(object):
 		pl_user = row['user']
 		pl_created = row['created_on']
 
-		pl_songs = row['songs']
 		pl = {'name':pl_name, 'user': pl_user,
-				   'songs': pl_songs, 'created_on': pl_created}
+				   'created_on': pl_created}
 		return pl
 	def _create_user_object(self, row):
 
@@ -257,7 +256,7 @@ class MusicDatabase(object):
 	def get_playlist(self, name, user):
 		#Create the SQL Query
 		keys_on = 'PRAGMA foreign_keys = ON'
-		query = 'SELECT name, user, count(song) as songs FROM playlists, song_in_playlist WHERE playlists.name = ? and playlists.user = ? and playlists.name = song_in_playlist.pl_name and playlists.user = song_in_playlist.pl_user'
+		query = 'SELECT * FROM playlists where user = ? and name = ?'
 		#Connects to the database. Gets a connection object
 		con = sqlite3.connect(self.db_path)
 		with con:
@@ -267,7 +266,7 @@ class MusicDatabase(object):
 			#Provide support for foreign keys
 			cur.execute(keys_on)        
 			#Execute main SQL Statement
-			pvalue = (name, user)
+			pvalue = (user, name)
 			cur.execute(query, pvalue)
 			#Process the response.
 			#Just one row is expected
@@ -278,9 +277,9 @@ class MusicDatabase(object):
 			return self._create_playlist_object(row)
 			
 	def get_playlists(self, user):
-				#Create the SQL Query
+		#Create the SQL Query
 		keys_on = 'PRAGMA foreign_keys = ON'
-		query = 'SELECT name, user, created_on, count(song) as songs FROM playlists, song_in_playlist where playlists.user = ? and playlists.name = song_in_playlist.pl_name and playlists.user = song_in_playlist.pl_user'
+		query = 'SELECT name, user, created_on FROM playlists where user = ?'
 		#Connects to the database. Gets a connection object
 		con = sqlite3.connect(self.db_path)
 		with con:
@@ -522,4 +521,90 @@ class MusicDatabase(object):
 				artist = self._create_artist_object(row)
 				artists.append(artist)
 			return artists
+
+	def delete_playlist(self, user, title):
+		keys_on = 'PRAGMA foreign_keys = ON'
+		stmnt = 'DELETE FROM playlists WHERE user = ? and name = ?'
+		#connects  to the database. 
+		con = sqlite3.connect(self.db_path)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)        
+			#Execute main SQL Statement
+			pvalue = (user,title,)
+			cur.execute(stmnt, pvalue)
+			#Check that the message has been deleted
+			if cur.rowcount < 1:
+				return False
+			#Return true if message is deleted.
+			return True
+
+	def delete_user(self, nickname):
+		keys_on = 'PRAGMA foreign_keys = ON'
+		stmnt = 'DELETE FROM users WHERE nickname = ?'
+		#connects  to the database. 
+		con = sqlite3.connect(self.db_path)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)        
+			#Execute main SQL Statement
+			pvalue = (nickname,)
+			cur.execute(stmnt, pvalue)
+			#Check that the message has been deleted
+			if cur.rowcount < 1:
+				return False
+			#Return true if message is deleted.
+			return True
+
+	
+	
+	def contains_playlist(self,user,title):
+		return self.get_playlist(title, user) is not None
+		
+	def modify_playlist(self, user, title, new_user, new_title, created_on):
+		keys_on = 'PRAGMA foreign_keys = ON'
+		stmnt = 'UPDATE playlists SET name = ? , user = ?, created_on = ?\
+				 WHERE user = ? and name = ?'
+		#Connects  to the database. 
+		con = sqlite3.connect(self.db_path)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)        
+			#Execute main SQL Statement
+			pvalue = (new_title, new_user, created_on, user, title,)
+			cur.execute(stmnt, pvalue)
+			if cur.rowcount < 1:
+				return None
+			return new_title
+			
+	def modify_user(self, old_nickname, age, country, gender):
+		keys_on = 'PRAGMA foreign_keys = ON'
+		stmnt = 'UPDATE users SET age = ?, country = ?, gender = ? \
+				 WHERE nickname = ?'
+		#Connects  to the database. 
+		con = sqlite3.connect(self.db_path)
+		with con:
+			#Cursor and row initialization
+			con.row_factory = sqlite3.Row
+			cur = con.cursor()
+			#Provide support for foreign keys
+			cur.execute(keys_on)        
+			#Execute main SQL Statement
+			pvalue = (age, country, gender, old_nickname,)
+			cur.execute(stmnt, pvalue)
+			if cur.rowcount < 1:
+				return None
+			return old_nickname
+
+
+
 

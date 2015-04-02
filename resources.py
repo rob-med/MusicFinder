@@ -259,10 +259,148 @@ class Song(Resource):
 class Playlist(Resource):
 
 	def get(self, nickname, title):
-		return
+		pl_db = g.db.get_playlist(title, nickname)
+		if not pl_db:
+			return create_error_response(404, "Unknown playlist",
+										 "There is no playlist called %s" % title,
+										 "Playlist")
+		#FILTER AND GENERATE RESPONSE
+		#Create the envelope:
+		envelope = {}
+		#Now create the links
+		links = {}
+		envelope["_links"] = links
+
+		#Fill the links
+		_curies = [
+			{
+				"name": "playlist",
+				"href": FORUM_MESSAGE_PROFILE,
+			},
+			{
+				"name": "atom-thread",
+				"href": ATOM_THREAD_PROFILE
+			}
+		]
+		links['curies'] = _curies
+		links['self'] = {'href':api.url_for(Playlist, nickname=nickname, title=title),
+						 'profile': FORUM_MESSAGE_PROFILE}
+		links['collection'] = {'href':api.url_for(User_playlists, nickname=nickname),
+							   'profile': FORUM_MESSAGE_PROFILE,
+							   'type':COLLECTIONJSON}
+		#Extract the author and add the link
+		#If sender is not Anonymous extract the nickname from message_db. The link
+		# exist but its href points to None.
+		#Extract the parent and add the corresponding link
+		
+		#Fill the template
+		envelope['template'] = {
+		  "data" : [
+			{"prompt" : "", "name" : "name", "value" : "", "required":True},
+			{"prompt" : "", "name" : "user", "value" : "", "required":True},
+			{"prompt" : "", "name" : "created_on", "value" : "", "required":False}
+			]
+		}
+
+		#Fill the rest of properties
+		envelope['name'] = pl_db['name']
+		envelope['user'] = pl_db['user']
+		envelope['created_on'] = pl_db['created_on']
+		
+		#RENDER
+		return Response (json.dumps(envelope), 200, mimetype=HAL+";"+FORUM_MESSAGE_PROFILE)
 	
 	def post(self):
 		return
+	
+	def delete(self, nickname, title):
+        
+		#PERFORM DELETE OPERATIONS
+		if g.db.delete_playlist(nickname, title):
+			return '', 204
+		else:
+			#Send error message
+			return create_error_response(404, "Unknown playlist",
+										 "There is no playlist titled %s" % title,
+										 "Playlist")
+    
+	def put(self, nickname, title):
+		'''
+		Modifies the title, body and editor properties of this message.
+
+		ENTITY BODY INPUT FORMAT:
+		* Media type: Collection+JSON: 
+			 http://amundsen.com/media-types/collection/
+		   - Extensions: template validation and value-types
+			 https://github.com/collection-json/extensions
+		 * Profile: Forum_Message
+		   http://atlassian.virtues.fi:8090/display/PWP
+		   /Exercise+3#Exercise3-Forum_Message
+
+		The body should be a Collection+JSON template.         
+		Semantic descriptors used in template: headline, articleBody and editor. 
+		If author is not there consider it  "Anonymous". 
+	   
+		OUTPUT:
+		Returns 204 if the message is modified correctly
+		Returns 400 if the body of the request is not well formed or it is
+		empty.
+		Returns 404 if there is no message with messageid
+		Returns 415 if the input is not JSON.
+
+		NOTE: 
+		Now articleBody links to the column body in the database
+		Now headline links to the column title in the database
+		Now author links to the column sender in the database.
+
+		'''
+
+		#CHECK THAT MESSAGE EXISTS
+		if not g.db.contains_playlist(nickname, title):
+			raise NotFound()
+
+		#PARSE THE REQUEST
+		#Extract the request body. In general would be request.data
+		#Since the request is JSON I use request.get_json
+		#get_json returns a python dictionary after serializing the request body
+		#get_json returns None if the body of the request is not formatted
+		input = request.get_json(force=True)
+		# using JSON
+		if not input:
+			return create_error_response(415, "Unsupported Media Type",
+									 "Use a JSON compatible format",
+									 "Playlist")
+
+
+		#It throws a BadRequest exception, and hence a 400 code if the JSON is 
+		#not wellformed
+		try: 
+			data = input['template']['data']
+			new_title = None
+			new_user = None
+			created_on = None
+			for d in data: 
+				#This code has a bad performance. We write it like this for
+				#simplicity. Another alternative should be used instead.
+				if d['name'] == 'name':
+					new_title = d['value']
+				elif d['name'] == 'user':
+					new_user = d['value']
+				elif d['name'] == 'created_on':
+					created_on = d['value']
+			#CHECK THAT DATA RECEIVED IS CORRECT
+			if not new_title or not new_user:
+				abort(400)
+		except: 
+			#This is launched if either title or body does not exist or the 
+			#template.data is not there. 
+			abort(400)
+		else:
+			#Modify the message in the database
+			if not g.db.modify_playlist(nickname, title, new_user, new_title, created_on):
+				return NotFound()
+			return '', 204
+
 class Playlist_songs(Resource):
 
 	def get(self):
@@ -398,9 +536,137 @@ class User(Resource):
 		#RENDER
 		return Response (json.dumps(envelope), 200, mimetype=HAL+";"+FORUM_MESSAGE_PROFILE)
 
-	def post(self):
-		return
+	def post(self, nickname):
 
+			
+		#CHECK THAT MESSAGE EXISTS
+        #If the message with messageid does not exist return status code 404
+
+        #Extract the request body. In general would be request.data
+        #Since the request is JSON I use request.get_json
+        #get_json returns a python dictionary after serializing the request body
+        #get_json returns None if the body of the request is not formatted
+        # using JSON
+		input = request.get_json(force=True)
+		if not input:
+			return create_error_response(415, "Unsupported Media Type",
+										 "Use a JSON compatible format",
+										 "User")
+	
+		
+		try: 
+			data = input['template']['data']
+			name = None
+			for d in data: 
+				#This code has a bad performance. We write it like this for
+				#simplicity. Another alternative should be used instead.
+				if d['name'] == 'name':
+					name = d['value']
+			#CHECK THAT DATA RECEIVED IS CORRECT
+				if not name or not nickname:
+					return create_error_response(400, "Wrong request format",
+											 "Be sure you include playlist's title and owner",
+											 "User")
+		except: 
+			#This is launched if either title or body does not exist or if 
+			# the template.data array does not exist.
+				return create_error_response(400, "Wrong request format",
+											 "Be sure you include playlist's title and owner",
+											 "User")
+		
+		#Create the new message and build the response code'
+		plid = g.db.create_playlist(name, nickname)
+		if not plid:
+			abort(500)
+			   
+		#Create the Location header with the id of the message created
+		url = api.url_for(Playlist, nickname=nickname, title=name)
+
+		#RENDER
+		#Return the response
+		return Response(status=201, headers={'Location':url})
+	
+	def delete(self, nickname):
+		if g.db.delete_user(nickname):
+			return '', 204
+		else:
+			#Send error message
+			return create_error_response(404, "Unknown user",
+										 "There is no user with nickname %s" % nickname,
+										 "User")
+										 
+	def put(self, nickname):
+		'''
+		Modifies the title, body and editor properties of this message.
+
+		ENTITY BODY INPUT FORMAT:
+		* Media type: Collection+JSON: 
+			 http://amundsen.com/media-types/collection/
+		   - Extensions: template validation and value-types
+			 https://github.com/collection-json/extensions
+		 * Profile: Forum_Message
+		   http://atlassian.virtues.fi:8090/display/PWP
+		   /Exercise+3#Exercise3-Forum_Message
+
+		The body should be a Collection+JSON template.         
+		Semantic descriptors used in template: headline, articleBody and editor. 
+		If author is not there consider it  "Anonymous". 
+	   
+		OUTPUT:
+		Returns 204 if the message is modified correctly
+		Returns 400 if the body of the request is not well formed or it is
+		empty.
+		Returns 404 if there is no message with messageid
+		Returns 415 if the input is not JSON.
+
+		NOTE: 
+		Now articleBody links to the column body in the database
+		Now headline links to the column title in the database
+		Now author links to the column sender in the database.
+
+		'''
+
+		#CHECK THAT MESSAGE EXISTS
+
+		#PARSE THE REQUEST
+		#Extract the request body. In general would be request.data
+		#Since the request is JSON I use request.get_json
+		#get_json returns a python dictionary after serializing the request body
+		#get_json returns None if the body of the request is not formatted
+		# using JSON
+		input = request.get_json(force=True)
+		if not input:
+			return create_error_response(415, "Unsupported Media Type",
+									 "Use a JSON compatible format",
+									 "User")
+
+
+		#It throws a BadRequest exception, and hence a 400 code if the JSON is 
+		#not wellformed
+		try: 
+			data = input['template']['data']
+			age = None
+			country = None
+			gender = None
+			for d in data: 
+				#This code has a bad performance. We write it like this for
+				#simplicity. Another alternative should be used instead.
+				if d['name'] == 'age':
+					age = d['value']
+				elif d['name'] == 'country':
+					country = d['value']
+				elif d['name'] == 'gender':
+					gender = d['value']
+
+		except: 
+			#This is launched if either title or body does not exist or the 
+			#template.data is not there. 
+			abort(400)
+		else:
+			#Modify the message in the database
+			if not g.db.modify_user(nickname, age, country, gender):
+				return NotFound()
+			return '', 204
 
 class User_playlists(Resource):
 
@@ -438,11 +704,14 @@ class User_playlists(Resource):
 			
 			pl['links'] = []
 			items.append(pl)
+			
 		collection['items'] = items
 		return envelope
 
 	def post(self):
 		return
+		
+
 
 
 
