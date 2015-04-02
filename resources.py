@@ -249,13 +249,83 @@ class Songs(Resource):
 
 	def post(self):
 		return
+		
 class Song(Resource):
 
-	def get(self):
-		return
+	def get(self, artist, title):
+		song_db = g.db.get_song(artist, title)
+		if not song_db:
+			return create_error_response(404, "Unknown song",
+										 "There is no song named %s of the artist %s" % (title,artist),
+										 "Song")
+		#FILTER AND GENERATE RESPONSE
+		#Create the envelope:
+		envelope = {}
+		#Now create the links
+		links = {}
+		envelope["_links"] = links
+
+		#Fill the links
+		_curies = [
+			{
+				"name": "song",
+				"href": FORUM_MESSAGE_PROFILE,
+			},
+			{
+				"name": "atom-thread",
+				"href": ATOM_THREAD_PROFILE
+			}
+		]
+		links['curies'] = _curies
+		links['self'] = {'href':api.url_for(Song, title=title, artist=artist),
+						 'profile': FORUM_MESSAGE_PROFILE}
+		links['collection'] = {'href':api.url_for(Songs, artist=artist),
+							   'profile': FORUM_MESSAGE_PROFILE,
+							   'type':COLLECTIONJSON}
+
+
+		#Extract the author and add the link
+		#If sender is not Anonymous extract the nickname from message_db. The link
+		# exist but its href points to None.
+		#Extract the parent and add the corresponding link
+		
+		#Fill the template
+		envelope['template'] = {
+		  "data" : [
+			{"prompt" : "", "name" : "title", "value" : "", "required":True},
+			{"prompt" : "", "name" : "artist", "value" : "", "required":False},
+			{"prompt" : "", "name" : "year", "value" : "", "required":False},
+			{"prompt" : "", "name" : "length", "value" : "", "required":False},
+			{"prompt" : "", "name" : "sid", "value" : "", "required":False},
+
+			]
+		}
+
+		#Fill the rest of properties
+		envelope['title'] = song_db['title']
+		envelope['artist'] = song_db['artist']
+		envelope['year'] = song_db['year']
+		envelope['length'] = song_db['length']
+		envelope['sid'] = song_db['songid']
+
+		
+		#RENDER
+		return Response (json.dumps(envelope), 200, mimetype=HAL+";"+FORUM_MESSAGE_PROFILE)
 	
 	def post(self):
 		return
+
+	def delete(self, artist, title):
+
+		if g.db.delete_song(artist, title):
+			return '', 204
+		else:
+
+			return create_error_response(404, "Unknown message",
+										 "There is no a message with id %s" % messageid,
+										 "Message")
+
+
 class Playlist(Resource):
 
 	def get(self, nickname, title):
