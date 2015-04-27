@@ -3,7 +3,7 @@ import time, sqlite3, sys, re, os
 #Default paths for .db and .sql files to create and populate the database.
 DEFAULT_DB_PATH = 'db/musicdb.db'
 DEFAULT_SCHEMA = "db/schema_dump.sql"
-DEFAULT_DATA_DUMP = "db/forum_data_dump.sql"
+DEFAULT_DATA_DUMP = "db/musicfinder_data_dump.sql"
 
 class MusicDatabase(object):
 
