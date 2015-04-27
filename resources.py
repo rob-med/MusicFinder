@@ -124,21 +124,19 @@ class Artists(Resource):
             #CHECK THAT DATA RECEIVED IS CORRECT
             if not name or not genre:
                 return create_error_response(400, "Wrong request format",
-                                             "Be sure you include message title and body",
+                                             "Be sure you include artist's name and genre",
                                              "Artists")
         except:
             #This is launched if either title or body does not exist or if
             # the template.data array does not exist.
             return create_error_response(400, "Wrong request format",
-                                         "Be sure you include message title and body",
+                                         "Be sure you include artist's name and genre",
                                          "Artists")
 
-        #Create the new message and build the response code'
         aid = g.db.create_artist(name, genre, country=None, language=None, formed_in=None)
         if not aid:
             abort(500)
 
-        #Create the Location header with the id of the message created
         url = api.url_for(Artist, name=name)
 
         #RENDER
@@ -183,10 +181,6 @@ class Artist(Resource):
                                 'type': COLLECTIONJSON,
                                 'rel': "songs-all"}
                                ]
-        #Extract the author and add the link
-        #If sender is not Anonymous extract the nickname from message_db. The link
-        # exist but its href points to None.
-        #Extract the parent and add the corresponding link
 
         #Fill the template
         envelope['template'] = {
@@ -291,12 +285,11 @@ class Songs(Resource):
                                          "Be sure you include song's title",
                                          "Artists")
 
-        #Create the new message and build the response code'
+
         aid = g.db.create_song(title, year, length, artist)
         if not aid:
             abort(500)
 
-        #Create the Location header with the id of the message created
         url = api.url_for(Song, artist=artist, title=title)
 
         #RENDER
@@ -348,10 +341,6 @@ class Song(Resource):
 							   'type': "" ,
                                'rel': "artist"}
 
-        #Extract the author and add the link
-        #If sender is not Anonymous extract the nickname from message_db. The link
-        # exist but its href points to None.
-        #Extract the parent and add the corresponding link
 
         #Fill the template
         envelope['template'] = {
@@ -422,10 +411,6 @@ class Playlist(Resource):
         links['collection'] = {'href':api.url_for(User_playlists, nickname=nickname),
                                'profile': PLAYLIST_PROFILE,
                                'type':COLLECTIONJSON}
-        #Extract the author and add the link
-        #If sender is not Anonymous extract the nickname from message_db. The link
-        # exist but its href points to None.
-        #Extract the parent and add the corresponding link
 
         #Fill the template
         envelope['template'] = {
@@ -482,12 +467,10 @@ class Playlist(Resource):
         sid = song['songid']
         print sid
 
-        #Create the new message and build the response code'
         aid = g.db.append_song_to_playlist(sid, title, nickname)
         if not aid:
             abort(500)
 
-        #Create the Location header with the id of the message created
         url = api.url_for(Playlist, nickname=nickname, title=title)
 
         #RENDER
@@ -502,58 +485,21 @@ class Playlist(Resource):
         if g.db.delete_playlist(nickname, title):
             return '', 204
         else:
-            #Send error message
             return create_error_response(404, "Unknown playlist",
                                          "There is no playlist titled %s" % title,
                                          "Playlist")
 
     def put(self, nickname, title):
-        '''
-        Modifies the title, body and editor properties of this message.
 
-        ENTITY BODY INPUT FORMAT:
-        * Media type: Collection+JSON:
-             http://amundsen.com/media-types/collection/
-           - Extensions: template validation and value-types
-             https://github.com/collection-json/extensions
-         * Profile: Forum_Message
-           http://atlassian.virtues.fi:8090/display/PWP
-           /Exercise+3#Exercise3-Forum_Message
-
-        The body should be a Collection+JSON template.
-        Semantic descriptors used in template: headline, articleBody and editor.
-        If author is not there consider it  "Anonymous".
-
-        OUTPUT:
-        Returns 204 if the message is modified correctly
-        Returns 400 if the body of the request is not well formed or it is
-        empty.
-        Returns 404 if there is no message with messageid
-        Returns 415 if the input is not JSON.
-
-        NOTE:
-        Now articleBody links to the column body in the database
-        Now headline links to the column title in the database
-        Now author links to the column sender in the database.
-
-        '''
-
-        #CHECK THAT MESSAGE EXISTS
         if not g.db.contains_playlist(nickname, title):
             raise NotFound()
 
-        #PARSE THE REQUEST
-        #Extract the request body. In general would be request.data
-        #Since the request is JSON I use request.get_json
-        #get_json returns a python dictionary after serializing the request body
-        #get_json returns None if the body of the request is not formatted
         input = request.get_json(force=True)
         # using JSON
         if not input:
             return create_error_response(415, "Unsupported Media Type",
                                          "Use a JSON compatible format",
                                          "Playlist")
-
 
         #It throws a BadRequest exception, and hence a 400 code if the JSON is
         #not wellformed
@@ -575,11 +521,8 @@ class Playlist(Resource):
             if not new_title or not new_user:
                 abort(400)
         except:
-            #This is launched if either title or body does not exist or the
-            #template.data is not there.
             abort(400)
         else:
-            #Modify the message in the database
             if not g.db.modify_playlist(nickname, title, new_user, new_title, created_on):
                 return NotFound()
             return '', 204
@@ -637,8 +580,6 @@ class Playlist_songs(Resource):
 class Users(Resource):
 
     def get(self):
-        #PERFORM OPERATIONS
-        #Create the messages list
         users_db = g.db.get_users()
 
         #FILTER AND GENERATE THE RESPONSE
@@ -711,7 +652,7 @@ class User(Resource):
     def get(self, nickname):
         user_db = g.db.get_user(nickname)
         if not user_db:
-            return create_error_response(404, "Unknown message",
+            return create_error_response(404, "Unknown user",
                                          "There is no user named %s" % nickname,
                                          "User")
         #FILTER AND GENERATE RESPONSE
@@ -744,10 +685,6 @@ class User(Resource):
                                'type':COLLECTIONJSON,
                                'rel': "playlists-all"}
                                ]
-        #Extract the author and add the link
-        #If sender is not Anonymous extract the nickname from message_db. The link
-        # exist but its href points to None.
-        #Extract the parent and add the corresponding link
 
         #Fill the template
         envelope['template'] = {
@@ -798,12 +735,10 @@ class User(Resource):
                                          "Be sure you include playlist's title and owner",
                                          "User")
 
-        #Create the new message and build the response code'
         plid = g.db.create_playlist(name, nickname)
         if not plid:
             abort(500)
 
-        #Create the Location header with the id of the message created
         url = api.url_for(Playlist, nickname=nickname, title=name)
 
         #RENDER
@@ -820,44 +755,7 @@ class User(Resource):
                                          "User")
 
     def put(self, nickname):
-        '''
-        Modifies the title, body and editor properties of this message.
 
-        ENTITY BODY INPUT FORMAT:
-        * Media type: Collection+JSON:
-             http://amundsen.com/media-types/collection/
-           - Extensions: template validation and value-types
-             https://github.com/collection-json/extensions
-         * Profile: Forum_Message
-           http://atlassian.virtues.fi:8090/display/PWP
-           /Exercise+3#Exercise3-Forum_Message
-
-        The body should be a Collection+JSON template.
-        Semantic descriptors used in template: headline, articleBody and editor.
-        If author is not there consider it  "Anonymous".
-
-        OUTPUT:
-        Returns 204 if the message is modified correctly
-        Returns 400 if the body of the request is not well formed or it is
-        empty.
-        Returns 404 if there is no message with messageid
-        Returns 415 if the input is not JSON.
-
-        NOTE:
-        Now articleBody links to the column body in the database
-        Now headline links to the column title in the database
-        Now author links to the column sender in the database.
-
-        '''
-
-        #CHECK THAT MESSAGE EXISTS
-
-        #PARSE THE REQUEST
-        #Extract the request body. In general would be request.data
-        #Since the request is JSON I use request.get_json
-        #get_json returns a python dictionary after serializing the request body
-        #get_json returns None if the body of the request is not formatted
-        # using JSON
         input = request.get_json(force=True)
         if not input:
             return create_error_response(415, "Unsupported Media Type",
@@ -883,11 +781,8 @@ class User(Resource):
                     gender = d['value']
 
         except:
-            #This is launched if either title or body does not exist or the
-            #template.data is not there.
             abort(400)
         else:
-            #Modify the message in the database
             if not g.db.modify_user(nickname, age, country, gender):
                 return NotFound()
             return '', 204

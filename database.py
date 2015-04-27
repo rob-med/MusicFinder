@@ -5,12 +5,6 @@ DEFAULT_DB_PATH = 'db/musicdb.db'
 DEFAULT_SCHEMA = "db/schema_dump.sql"
 DEFAULT_DATA_DUMP = "db/forum_data_dump.sql"
 
-'''
-
-songs getFavorites(user)
-user_profile getUserProfile(nickname)
-'''
-
 class MusicDatabase(object):
 
     def __init__(self, db_path=None):
@@ -340,8 +334,7 @@ class MusicDatabase(object):
             cur = con.cursor()
             #Provide support for foreign keys
             cur.execute(keys_on)
-            #If exists the replyto argument, check that the message exists in
-            #the database table
+
 
             #Execute SQL Statement to get userid given nickname
             pvalue = (name,genre,country,language,formed_in,)
@@ -360,8 +353,7 @@ class MusicDatabase(object):
             cur = con.cursor()
             #Provide support for foreign keys
             cur.execute(keys_on)
-            #If exists the replyto argument, check that the message exists in
-            #the database table
+
 
             #Execute SQL Statement to get userid given nickname
             pvalue = (title,year,length,artist,)
@@ -379,8 +371,6 @@ class MusicDatabase(object):
             cur = con.cursor()
             #Provide support for foreign keys
             cur.execute(keys_on)
-            #If exists the replyto argument, check that the message exists in
-            #the database table
 
             #Execute SQL Statement to get userid given nickname
             pvalue = (nickname,password,)
@@ -400,8 +390,7 @@ class MusicDatabase(object):
             cur = con.cursor()
             #Provide support for foreign keys
             cur.execute(keys_on)
-            #If exists the replyto argument, check that the message exists in
-            #the database table
+
             timestamp = time.mktime(datetime.now().timetuple())
 
             #Execute SQL Statement to get userid given nickname
@@ -421,8 +410,7 @@ class MusicDatabase(object):
             cur = con.cursor()
             #Provide support for foreign keys
             cur.execute(keys_on)
-            #If exists the replyto argument, check that the message exists in
-            #the database table
+
             timestamp = time.mktime(datetime.now().timetuple())
 
             #Execute SQL Statement to get userid given nickname
@@ -536,10 +524,10 @@ class MusicDatabase(object):
             #Execute main SQL Statement
             pvalue = (user,title,)
             cur.execute(stmnt, pvalue)
-            #Check that the message has been deleted
+
             if cur.rowcount < 1:
                 return False
-            #Return true if message is deleted.
+
             return True
 
     def delete_user(self, nickname):
@@ -556,10 +544,9 @@ class MusicDatabase(object):
             #Execute main SQL Statement
             pvalue = (nickname,)
             cur.execute(stmnt, pvalue)
-            #Check that the message has been deleted
             if cur.rowcount < 1:
                 return False
-            #Return true if message is deleted.
+
             return True
 
 
