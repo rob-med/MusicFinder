@@ -191,7 +191,7 @@ class MusicDatabase(object):
             #Provide support for foreign keys
             cur.execute(keys_on)
             #Execute main SQL Statement
-            pvalue = (artist, title)
+            pvalue = (artist, title,)
             cur.execute(query, pvalue)
             #Process the response.
             #Just one row is expected

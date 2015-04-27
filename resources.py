@@ -112,7 +112,7 @@ class Artists(Resource):
                     genre = d['value']
 
                 elif d['name'] == 'country':
-                    country = d['country']
+                    country = d['value']
 
                 elif d['name'] == 'language':
                     language = d['value']
@@ -256,7 +256,53 @@ class Songs(Resource):
         collection['items'] = items
         return envelope
 
-    def post(self):
+    def post(self, artist):
+        input = request.get_json(force=True)
+        if not input:
+            abort(415)
+
+        #It throws a BadRequest exception, and hence a 400 code if the JSON is
+        #not wellformed
+        try:
+            data = input['template']['data']
+            title = None
+            length = None
+            year = None
+
+            for d in data:
+                #This code has a bad performance. We write it like this for
+                #simplicity. Another alternative should be used instead.
+                if d['name'] == 'title':
+                    title = d['value']
+                elif d['name'] == 'length':
+                    length = d['value']
+                elif d['name'] == 'year':
+                    year = d['value']
+
+            #CHECK THAT DATA RECEIVED IS CORRECT
+            if not title:
+                return create_error_response(400, "Wrong request format",
+                                             "Be sure you include song's title",
+                                             "Songs")
+        except:
+            #This is launched if either title or body does not exist or if
+            # the template.data array does not exist.
+            return create_error_response(400, "Wrong request format",
+                                         "Be sure you include song's title",
+                                         "Artists")
+
+        #Create the new message and build the response code'
+        aid = g.db.create_song(title, year, length, artist)
+        if not aid:
+            abort(500)
+
+        #Create the Location header with the id of the message created
+        url = api.url_for(Song, artist=artist, title=title)
+
+        #RENDER
+        #Return the response
+        return Response(status=201, headers={'Location':url})
+
         return
 
 class Song(Resource):
@@ -398,8 +444,57 @@ class Playlist(Resource):
         #RENDER
         return Response (json.dumps(envelope), 200, mimetype=HAL+";"+ PLAYLIST_PROFILE)
 
-    def post(self):
-        return
+    def post(self, nickname, title):
+        input = request.get_json(force=True)
+        if not input:
+            abort(415)
+
+        #It throws a BadRequest exception, and hence a 400 code if the JSON is
+        #not wellformed
+        try:
+            data = input['template']['data']
+            artist = None
+            song_title = None
+            for d in data:
+                #This code has a bad performance. We write it like this for
+                #simplicity. Another alternative should be used instead.
+                if d['name'] == 'artist':
+                    artist = d['value']
+                elif d['name'] == 'title':
+                    song_title = d['value']
+
+            #CHECK THAT DATA RECEIVED IS CORRECT
+            if not artist or not song_title:
+                return create_error_response(400, "Wrong request format",
+                                             "Be sure you include song's title and artist",
+                                             "Playlist")
+        except:
+            #This is launched if either title or body does not exist or if
+            # the template.data array does not exist.
+            return create_error_response(400, "Wrong request format",
+                                         "Be sure you include song's title and artist",
+                                         "Playlist")
+        song = g.db.get_song(artist, song_title)
+        str(song)
+        if not song:
+            abort(500)
+
+        sid = song['songid']
+        print sid
+
+        #Create the new message and build the response code'
+        aid = g.db.append_song_to_playlist(sid, title, nickname)
+        if not aid:
+            abort(500)
+
+        #Create the Location header with the id of the message created
+        url = api.url_for(Playlist, nickname=nickname, title=title)
+
+        #RENDER
+        #Return the response
+        return Response(status=201, headers={'Location':url})
+
+
 
     def delete(self, nickname, title):
 
@@ -491,8 +586,51 @@ class Playlist(Resource):
 
 class Playlist_songs(Resource):
 
-    def get(self):
-        return
+    def get(self, title, nickname):
+
+        songs = g.db.get_songs_in_playlist(title, nickname)
+
+        envelope = {}
+        collection = {}
+        envelope["collection"] = collection
+        collection['version'] = "1.0"
+        collection['href'] = api.url_for(Playlist_songs, nickname=nickname, title=title)
+        collection['template'] = {
+        "data" : [
+            {"prompt" : "", "name" : "title", "value" : "", "required":True},
+            {"prompt" : "", "name" : "artist", "value" : "", "required":True},
+            {"prompt" : "", "name" : "length", "value" : "", "required":False},
+            {"prompt" : "", "name" : "year", "value" : "", "required":False},
+
+            ]
+        }
+        #Create the items
+        items = []
+        for a in songs:
+            _artist = a['artist']
+            _title = a['title']
+            _length = a['length']
+            _year = a['year']
+            _url = api.url_for(Song, artist=a['artist'], title=_title)
+            song = {}
+            song['href'] = _url
+            song['data'] = []
+            value = {'name':'title', 'value':_title}
+            song['data'].append(value)
+            value = {'name':'artist', 'value': _artist}
+            song['data'].append(value)
+            value = {'name':'length', 'value':_length}
+            song['data'].append(value)
+            value = {'name':'year', 'value':_year}
+            song['data'].append(value)
+
+            song['links'] = []
+            items.append(song)
+        collection['items'] = items
+
+        return envelope
+
+
 
     def post(self):
         return
@@ -632,15 +770,7 @@ class User(Resource):
 
     def post(self, nickname):
 
-
-        #CHECK THAT MESSAGE EXISTS
-        #If the message with messageid does not exist return status code 404
-
-        #Extract the request body. In general would be request.data
-        #Since the request is JSON I use request.get_json
-        #get_json returns a python dictionary after serializing the request body
-        #get_json returns None if the body of the request is not formatted
-        # using JSON
+    #creates a playlist for the user
         input = request.get_json(force=True)
         if not input:
             return create_error_response(415, "Unsupported Media Type",
