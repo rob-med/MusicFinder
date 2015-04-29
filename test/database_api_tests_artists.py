@@ -18,7 +18,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
                 'formed_in': 2008
 
     }
-    initial_size = 2
+    initial_size = 20
 
     @classmethod
     def setUpClass(cls):
@@ -118,8 +118,8 @@ class ArtistsDbAPITestCase(BaseTestCase):
         #artists sent from Mystery are 13 and 14
         print '('+self.test_get_artists_specific_genre.__name__+')', \
         self.test_get_artists_specific_genre.__doc__
-        artists = db.get_artists("rock")
-        self.assertEquals(len(artists), 1)
+        artists = db.get_artists(genre = 'Rock')
+        self.assertEquals(len(artists), 3)
         #artists id are 13 and 14
         for artist in artists:
             self.assertIn(artist['name'], ('The Vaccines'))
@@ -131,7 +131,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
         '''
         print '('+self.test_create_artist.__name__+')',\
               self.test_create_artist.__doc__
-        artistid = db.create_artist("Editors","indie-rock","England","English",2004)
+        artistid = db.create_artist("Oasis","Pop","England","English",2004)
         self.assertIsNotNone(artistid)
         #Get the expected modified artist
         new_artist = {}

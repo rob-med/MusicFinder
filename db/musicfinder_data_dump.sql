@@ -10,6 +10,24 @@ CREATE TABLE "artists" (
 INSERT INTO "artists" VALUES('Placebo','England','English','alt-rock',1996);
 INSERT INTO "artists" VALUES('Editors',NULL,NULL,'Indie Rock',NULL);
 INSERT INTO "artists" VALUES('Foals',NULL,NULL,'Indie Rock',NULL);
+INSERT INTO "artists" VALUES('Cranberries',NULL,NULL,'Rock',1990);
+INSERT INTO "artists" VALUES('Muse','England','English','Rock',1992);
+INSERT INTO "artists" VALUES('OneRepublic','USA','English','Pop',2002);
+INSERT INTO "artists" VALUES('Eddie Vedder','USA','English','Grunge',NULL);
+INSERT INTO "artists" VALUES('Fritz Kalkbrenner','Germany',NULL,'Techno',NULL);
+INSERT INTO "artists" VALUES('Paul Kalkbrenner','Germany',NULL,'Techno',NULL);
+INSERT INTO "artists" VALUES('Sting','England','English','Pop',NULL);
+INSERT INTO "artists" VALUES('Coldplay','England','English','Pop',1997);
+INSERT INTO "artists" VALUES('Kavinsky','France',NULL,'House',NULL);
+INSERT INTO "artists" VALUES('John Legend','USA','English','Soul',NULL);
+INSERT INTO "artists" VALUES('Empire of the sun','Australia','English','Indie Rock',2008);
+INSERT INTO "artists" VALUES('Imagine Dragons','USA','English','Alternative Rock',2008);
+INSERT INTO "artists" VALUES('Manà','Mexico','Spanish','Rock',1986);
+INSERT INTO "artists" VALUES('Green day','USA','English','Punk',1986);
+INSERT INTO "artists" VALUES('Sanni','Finland','Finnish','Pop',NULL);
+INSERT INTO "artists" VALUES('Radiohead','England','English','Alternative Rock',1992);
+INSERT INTO "artists" VALUES('Dream Theater','USA','English','Heavy Metal',1985);
+
 DROP TABLE IF EXISTS "favorites";
 CREATE TABLE `favorites` (
 	`song`	INTEGER,
