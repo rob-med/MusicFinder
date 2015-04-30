@@ -7,8 +7,8 @@ CREATE TABLE "artists" (
 	`formed_in`	INTEGER,
 	PRIMARY KEY(name)
 );
-INSERT INTO "artists" VALUES('Placebo','England','English','alt-rock',1996);
-INSERT INTO "artists" VALUES('Editors',NULL,NULL,'Indie Rock',NULL);
+INSERT INTO "artists" VALUES('Placebo','England','English','Alternative Rock',1996);
+INSERT INTO "artists" VALUES('Editors','England','English','Indie Rock',2004);
 INSERT INTO "artists" VALUES('Foals',NULL,NULL,'Indie Rock',NULL);
 INSERT INTO "artists" VALUES('Cranberries',NULL,NULL,'Rock',1990);
 INSERT INTO "artists" VALUES('Muse','England','English','Rock',1992);
@@ -22,7 +22,7 @@ INSERT INTO "artists" VALUES('Kavinsky','France',NULL,'House',NULL);
 INSERT INTO "artists" VALUES('John Legend','USA','English','Soul',NULL);
 INSERT INTO "artists" VALUES('Empire of the sun','Australia','English','Indie Rock',2008);
 INSERT INTO "artists" VALUES('Imagine Dragons','USA','English','Alternative Rock',2008);
-INSERT INTO "artists" VALUES('Manà','Mexico','Spanish','Rock',1986);
+INSERT INTO "artists" VALUES('Mana','Mexico','Spanish','Rock',1986);
 INSERT INTO "artists" VALUES('Green day','USA','English','Punk',1986);
 INSERT INTO "artists" VALUES('Sanni','Finland','Finnish','Pop',NULL);
 INSERT INTO "artists" VALUES('Radiohead','England','English','Alternative Rock',1992);

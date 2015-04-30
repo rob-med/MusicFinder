@@ -490,7 +490,7 @@ class MusicDatabase(object):
                 query += " and "
             query += "language = '%s'" % language
 
-        con = sqlite3.connect(DEFAULT_DB_PATH)
+        con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
             con.row_factory = sqlite3.Row
