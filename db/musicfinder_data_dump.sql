@@ -77,4 +77,6 @@ CREATE TABLE "users" (
 	`gender`	TEXT,
 	PRIMARY KEY(nickname)
 );
-INSERT INTO "users" VALUES('robi','robi',88,'BOH',NULL);
+INSERT INTO "users" VALUES('Robi','pass',18,'Italy','Male');
+INSERT INTO "users" VALUES('Joshua','oerae',34,'Austalia','Male');
+INSERT INTO "users" VALUES('Clayton','ampsy',18,'USA','Male');

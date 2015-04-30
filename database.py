@@ -361,6 +361,7 @@ class MusicDatabase(object):
             #Extract user id
             #Return the id in
             return cur.lastrowid
+
     def create_user(self, nickname, password):
         keys_on = 'PRAGMA foreign_keys = ON'
         stmnt = 'INSERT INTO users (nickname,password) VALUES(?,?)'
@@ -378,6 +379,36 @@ class MusicDatabase(object):
             #Extract user id
             #Return the id in
             return cur.lastrowid
+
+    def append_user(self, nickname, password):
+        '''Same as create_user but it returns the nickname instead of the user id (basically for testing) '''
+
+        keys_on = 'PRAGMA foreign_keys = ON'
+        #SQL Statement for extracting the userid given a nickname
+        query1 = 'SELECT nickname from users WHERE nickname = ?'
+        stmnt = 'INSERT INTO users (nickname,password) VALUES(?,?)'
+        con = sqlite3.connect(self.db_path)
+
+        with con:
+            #Cursor and row initialization
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+            #Provide support for foreign keys
+            cur.execute(keys_on)
+            pvalue = (nickname,)
+            cur.execute(query1, pvalue)
+            #No value expected (no other user with that nickname expected)
+            row = cur.fetchone()
+            if row is None:
+                #Execute SQL Statement to get userid given nickname
+                pvalue = (nickname,password,)
+                cur.execute(stmnt, pvalue)
+                #Extract user id
+                #Return the id in
+                return nickname
+            else:
+                return None
+
 
 
     def create_playlist(self, name, user):
@@ -450,7 +481,7 @@ class MusicDatabase(object):
         query = 'SELECT * FROM users'
           #Nickname restriction
 
-        con = sqlite3.connect(DEFAULT_DB_PATH)
+        con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
             con.row_factory = sqlite3.Row

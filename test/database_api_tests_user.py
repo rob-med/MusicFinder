@@ -20,7 +20,6 @@ class UserDbAPITestCase(BaseTestCase):
             "country": "Austalia",
             "gender": "Male"
     }
-    new_user_nickname = 'sully'
     new_user = {
             "nickname": "Clayton",
             "password": "ampsy",
@@ -28,9 +27,9 @@ class UserDbAPITestCase(BaseTestCase):
             "country": "USA",
             "gender": "Male"
     }
-    new_user_nickname = "Clayton"
+    new_user_nickname = 'sully'
     no_user_nickname = 'Nobody'
-    initial_size = 2
+    initial_size = 3
  
     @classmethod
     def setUpClass(cls):
@@ -159,12 +158,12 @@ class UserDbAPITestCase(BaseTestCase):
         print '('+self.test_modify_user.__name__+')', \
               self.test_modify_user.__doc__
         #Get the modified user
-        resp = db.modify_user(self.user1_nickname, "78", "Poland", "Male")
+        resp = db.modify_user(self.user1_nickname, 78, "Poland", "Male")
         self.assertEquals(resp, self.user1_nickname)
         #Check that the users has been really modified through a get
         resp2 = db.get_user(self.user1_nickname)
         self.assertEquals(resp2['age'],
-                          "78")
+                          78)
         self.assertEquals(resp2['country'], "Poland")
         self.assertEquals(resp2['gender'], "Male")
 
@@ -185,7 +184,7 @@ class UserDbAPITestCase(BaseTestCase):
         '''
         print '('+self.test_append_user.__name__+')', \
               self.test_append_user.__doc__
-        nickname = db.create_user(self.new_user_nickname, "new password")
+        nickname = db.append_user(self.new_user_nickname, "new password")
         self.assertIsNotNone(nickname)
         self.assertEquals(nickname, self.new_user_nickname)
         #Check that the messages has been really modified through a get
