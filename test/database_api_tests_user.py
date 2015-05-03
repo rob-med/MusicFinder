@@ -21,11 +21,8 @@ class UserDbAPITestCase(BaseTestCase):
             "gender": "Male"
     }
     new_user = {
-            "nickname": "Clayton",
+            "nickname": "sully",
             "password": "ampsy",
-            "age": 18,
-            "country": "USA",
-            "gender": "Male"
     }
     new_user_nickname = 'sully'
     no_user_nickname = 'Nobody'
@@ -184,7 +181,7 @@ class UserDbAPITestCase(BaseTestCase):
         '''
         print '('+self.test_append_user.__name__+')', \
               self.test_append_user.__doc__
-        nickname = db.append_user(self.new_user_nickname, "new password")
+        nickname = db.append_user(nickname=self.new_user_nickname, password="ampsy" )
         self.assertIsNotNone(nickname)
         self.assertEquals(nickname, self.new_user_nickname)
         #Check that the messages has been really modified through a get
@@ -198,7 +195,7 @@ class UserDbAPITestCase(BaseTestCase):
         '''
         print '('+self.test_append_existing_user.__name__+')', \
               self.test_append_existing_user.__doc__
-        nickname = db.create_user(self.user1_nickname, "adas")
+        nickname = db.append_user(self.user1_nickname, "adas")
         self.assertIsNone(nickname)
 
 if __name__ == '__main__':
