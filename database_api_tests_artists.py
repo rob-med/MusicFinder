@@ -1,6 +1,7 @@
-import sqlite3, unittest
+import sqlite3
+import unittest
 
-from .database_api_tests_common import BaseTestCase, db, db_path
+from database_api_tests_common import BaseTestCase, db, db_path
 
 class ArtistsDbAPITestCase(BaseTestCase):
 

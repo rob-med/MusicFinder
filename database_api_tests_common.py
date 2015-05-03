@@ -3,7 +3,7 @@ import unittest, os
 import database
 
 #Path to the database file, different from the deployment db
-db_path = 'db/db_test.db'
+db_path = 'db/testdb2.db'
 db = database.MusicDatabase(db_path)
 
 class BaseTestCase(unittest.TestCase):
@@ -23,7 +23,6 @@ class BaseTestCase(unittest.TestCase):
             os.remove(db_path)
         #This method load the initial values from forum_data_dump.sql
         #It creates the database if it does not exist. 
-        db.load_init_values()
 
     def tearDown(self):
         db.clean()
