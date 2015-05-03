@@ -5,21 +5,21 @@ from database_api_tests_common import BaseTestCase, db, db_path
 
 class ArtistsDbAPITestCase(BaseTestCase):
 
-    artist1 = {'name': 'Clap! Clap!',
-               'genre': 'electronic',
-                'country': "Italy",
-                'language': "Italian",
-                'formed_in': 2014
-                }
-    artist2 = {
-            'name': 'The Vaccines',
-                           'genre': 'rock',
+    artist1 = {'name': 'Placebo',
+               'genre': 'Alternative Rock',
                 'country': "England",
                 'language': "English",
-                'formed_in': 2008
+                'formed_in': 1996
+                }
+    artist2 = {
+            'name': 'Editors',
+                           'genre': 'Indie Rock',
+                'country': "England",
+                'language': "English",
+                'formed_in': 2004
 
     }
-    initial_size = 2
+    initial_size = 20
 
     @classmethod
     def setUpClass(cls):
@@ -60,7 +60,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
                self.test_create_artist_object.__doc__
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM artists WHERE name = "Clap! Clap!"'
+        query = 'SELECT * FROM artists WHERE name = "Placebo"'
         #Connects to the database.
         con = sqlite3.connect(db_path)
         with con:
@@ -119,11 +119,11 @@ class ArtistsDbAPITestCase(BaseTestCase):
         #artists sent from Mystery are 13 and 14
         print '('+self.test_get_artists_specific_genre.__name__+')', \
         self.test_get_artists_specific_genre.__doc__
-        artists = db.get_artists("rock")
-        self.assertEquals(len(artists), 1)
+        artists = db.get_artists(genre = 'Rock')
+        self.assertEquals(len(artists), 3)
         #artists id are 13 and 14
         for artist in artists:
-            self.assertIn(artist['name'], ('The Vaccines'))
+            self.assertIn(artist['name'], ('Cranberries', 'Muse', 'Mana'))
             self.assertNotIn(artist['name'], ('Clap! Clap!'))
 
     def test_create_artist(self):
@@ -132,12 +132,12 @@ class ArtistsDbAPITestCase(BaseTestCase):
         '''
         print '('+self.test_create_artist.__name__+')',\
               self.test_create_artist.__doc__
-        artistid = db.create_artist("Editors","indie-rock","England","English",2004)
+        artistid = db.create_artist("Oasis","Pop","England","English",2004)
         self.assertIsNotNone(artistid)
         #Get the expected modified artist
         new_artist = {}
         new_artist['name'] = 'Editors'
-        new_artist['genre'] = 'indie-rock'
+        new_artist['genre'] = 'Indie Rock'
         new_artist['country'] = 'England'
         new_artist['language'] = 'English'
         new_artist['formed_in'] = 2004
