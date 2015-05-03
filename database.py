@@ -167,7 +167,8 @@ class MusicDatabase(object):
         gender = row['gender']
         age = row['age']
         country = row['country']
-        user = {'nickname':name, 'gender': gender,
+        password = row['password']
+        user = {'nickname':name, 'password':password, 'gender': gender,
                    'age': age, 'country':country}
         return user
 
