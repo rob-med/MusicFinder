@@ -127,8 +127,6 @@ class Artists(Resource):
                                              "Be sure you include artist's name and genre",
                                              "Artists")
         except:
-            #This is launched if either title or body does not exist or if
-            # the template.data array does not exist.
             return create_error_response(400, "Wrong request format",
                                          "Be sure you include artist's name and genre",
                                          "Artists")
@@ -203,9 +201,6 @@ class Artist(Resource):
 
         #RENDER
         return Response (json.dumps(envelope), 200, mimetype=HAL+";"+ ARTIST_PROFILE)
-
-    def post(self):
-        return
 
 class Songs(Resource):
 
@@ -364,9 +359,6 @@ class Song(Resource):
 
         #RENDER
         return Response (json.dumps(envelope), 200, mimetype=HAL+";"+ SONG_PROFILE)
-
-    def post(self):
-        return
 
     def delete(self, artist, title):
 
@@ -573,10 +565,6 @@ class Playlist_songs(Resource):
 
         return envelope
 
-
-
-    def post(self):
-        return
 class Users(Resource):
 
     def get(self):
@@ -644,9 +632,6 @@ class Users(Resource):
         return envelope
 
 
-    def post(self):
-        return
-
 class User(Resource):
 
     def get(self, nickname):
@@ -704,46 +689,6 @@ class User(Resource):
 
         #RENDER
         return Response (json.dumps(envelope), 200, mimetype=HAL+";"+ USER_PROFILE)
-
-    def post(self, nickname):
-
-    #creates a playlist for the user
-        input = request.get_json(force=True)
-        if not input:
-            return create_error_response(415, "Unsupported Media Type",
-                                         "Use a JSON compatible format",
-                                         "User")
-
-
-        try:
-            data = input['template']['data']
-            name = None
-            for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'name':
-                    name = d['value']
-                #CHECK THAT DATA RECEIVED IS CORRECT
-                if not name or not nickname:
-                    return create_error_response(400, "Wrong request format",
-                                                 "Be sure you include playlist's title and owner",
-                                                 "User")
-        except:
-            #This is launched if either title or body does not exist or if
-            # the template.data array does not exist.
-            return create_error_response(400, "Wrong request format",
-                                         "Be sure you include playlist's title and owner",
-                                         "User")
-
-        plid = g.db.create_playlist(name, nickname)
-        if not plid:
-            abort(500)
-
-        url = api.url_for(Playlist, nickname=nickname, title=name)
-
-        #RENDER
-        #Return the response
-        return Response(status=201, headers={'Location':url})
 
     def delete(self, nickname):
         if g.db.delete_user(nickname):
@@ -827,8 +772,45 @@ class User_playlists(Resource):
         collection['items'] = items
         return envelope
 
-    def post(self):
-        return
+    def post(self, nickname):
+
+        #creates a playlist for the user
+        input = request.get_json(force=True)
+        if not input:
+            return create_error_response(415, "Unsupported Media Type",
+                                         "Use a JSON compatible format",
+                                         "User")
+
+
+        try:
+            data = input['template']['data']
+            name = None
+            for d in data:
+                #This code has a bad performance. We write it like this for
+                #simplicity. Another alternative should be used instead.
+                if d['name'] == 'name':
+                    name = d['value']
+                #CHECK THAT DATA RECEIVED IS CORRECT
+                if not name or not nickname:
+                    return create_error_response(400, "Wrong request format",
+                                                 "Be sure you include playlist's title and owner",
+                                                 "User")
+        except:
+            #This is launched if either title or body does not exist or if
+            # the template.data array does not exist.
+            return create_error_response(400, "Wrong request format",
+                                         "Be sure you include playlist's title and owner",
+                                         "User")
+
+        plid = g.db.create_playlist(name, nickname)
+        if not plid:
+            abort(500)
+
+        url = api.url_for(Playlist, nickname=nickname, title=name)
+
+        #RENDER
+        #Return the response
+        return Response(status=201, headers={'Location':url})
 
 
 
