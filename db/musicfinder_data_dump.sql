@@ -68,6 +68,25 @@ CREATE TABLE `songs` (
 );
 INSERT INTO "songs" VALUES('I know','Placebo',1996,'3:41',1);
 INSERT INTO "songs" VALUES('Pierrot the clown','Placebo',NULL,'4:23',2);
+INSERT INTO "songs" VALUES('Zombie','Cranberries',1994,'5:21',6);
+INSERT INTO "songs" VALUES('We are the people','Empire of the sun',2008,'4:17',7);
+INSERT INTO "songs" VALUES('Counting stars','OneRepublic',2013,'4:23',8);
+INSERT INTO "songs" VALUES('Radioactive','Imagine Dragons',2012,'3:07',9);
+INSERT INTO "songs" VALUES('2080-Luvulla','Sanni',2015,'4:18',10);
+INSERT INTO "songs" VALUES('Wes','Fritz Kalkbrenner',2011,'7:16',11);
+INSERT INTO "songs" VALUES('Fields of gold','Sting',1993,'3:39',12);
+INSERT INTO "songs" VALUES('Dirty paws','Of monster and men',2011,'4:38',13);
+INSERT INTO "songs" VALUES('Yellow','Coldplay',2000,'4:30',14);
+INSERT INTO "songs" VALUES('Just breathe','Pearl jam',2009,'3:36',15);
+INSERT INTO "songs" VALUES('Pacific coast highway','Kavinsky',2010,'5:44',16);
+INSERT INTO "songs" VALUES('All of me','John Legend',2013,'4:30',17);
+INSERT INTO "songs" VALUES('Rainbow girl','Giana factory',2010,'3:17',18);
+INSERT INTO "songs" VALUES('Beautiful day','U2',1993,'4:06',19);
+INSERT INTO "songs" VALUES('Blackout','Muse',2003,'4:22',20);
+INSERT INTO "songs" VALUES('Karma police','Radiohead',1997,'4:22',21);
+INSERT INTO "songs" VALUES('Porcelain','Moby',1999,'4:01',22);
+INSERT INTO "songs" VALUES('Starlight','Muse',2006,'4:00',23);
+
 DROP TABLE IF EXISTS "users";
 CREATE TABLE "users" (
 	`nickname`	TEXT,

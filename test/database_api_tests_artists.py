@@ -78,7 +78,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
 
     def test_get_artist(self):
         '''
-        Test get_artist with id msg-1 and msg-10
+        Test get_artist 
         '''
         print '('+self.test_get_artist.__name__+')', \
               self.test_get_artist.__doc__

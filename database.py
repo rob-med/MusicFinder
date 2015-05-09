@@ -135,7 +135,7 @@ class MusicDatabase(object):
         song_year = row['year']
         song_length = row['length']
         song_id = row['sid']
-        song = {'songid':song_id, 'title': song_title,
+        song = {'sid':song_id, 'title': song_title,
                    'artist':song_artist, 'year':song_year,
                    'length':song_length}
         return song
@@ -237,6 +237,32 @@ class MusicDatabase(object):
             #Execute main SQL Statement
             pvalue = (artist,)
             cur.execute(query, pvalue)
+            #Get results
+            rows = cur.fetchall()
+            if rows is None:
+                return None
+            #Build the return object
+            songs = []
+            for row in rows:
+                song = self._create_song_object(row)
+                songs.append(song)
+            return songs
+
+    def get_songs(self):
+
+        #Create the SQL Statement
+        keys_on = 'PRAGMA foreign_keys = ON'
+        query = 'SELECT * FROM songs'
+        #Connects to the database.
+        con = sqlite3.connect(self.db_path)
+        with con:
+            #Cursor and row initialization
+            con.row_factory = sqlite3.Row
+            cur = con.cursor()
+            #Provide support for foreign keys
+            cur.execute(keys_on)
+            #Execute main SQL Statement
+            cur.execute(query)
             #Get results
             rows = cur.fetchall()
             if rows is None:
