@@ -20,8 +20,8 @@ The list contains the url of the users.
 ONERROR => Show an alert to the user
 */
 
-function getPlaylists() {
-	var apiurl = ENTRYPOINT + "users/robi/playlists/";
+function getPlaylists(nickname) {
+	var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/";
 
 	return $.ajax({
 		url: apiurl,
@@ -408,6 +408,13 @@ function getDate(timestamp){
 	return day+"."+month+"."+year+ " at "+ hours + ':' + minutes + ':' + seconds;
 }
 
+// It takes parameters from the URL. The parameter is the nickname of the user
+function processForm()
+  {
+    var parameters = location.search.substring(1).split("&");
+    return parameters
+  }
+
 /*** END UI HELPERS***/
 
 /*** START ON LOAD ***/
@@ -433,8 +440,9 @@ $(function(){
 	// #deleteMessage => handleDeleteMessage
 	// li a.user_link => handleGetUser
 	// Direct and delegated events from http://api.jquery.com/on/
+	nickname = processForm();
     $("#playlists").on("click", "tr a.playlist_link", handleGetUser);
-	getPlaylists();
+	getPlaylists(nickname);
 	//Retrieve list of users from the server
 })
 /*** END ON LOAD**/

@@ -2,30 +2,74 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<title>Forum</title>
+	<title>Music Finder - User</title>
 	<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="forum_client.js"></script>
+	<script type="text/javascript" src="users.js"></script>
+	<!-- Bootstrap -->
+    <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-<div align="left"><input align="left" id="name" type="text" />
-    <input align="left" id="search_button" type="button" value="Search!" />
-    <a id="my_playlists" align="left" href="playlists.html">My playlists</a></div>
+	<div class="container-fluid">
+		<h1>Music Finder</h1>
+		<form class="form-inline">
+			<div class="form-group">
+				<label for="searchLabel">Search nick</label>
+				<input align="left" id="name" type="text" class="form-control"/>
+			</div>
+			<input align="left" id="search_button" type="button" value="Search!" class="btn btn-default" />
+			<input align="left" id="new_user_button" type="button" value="New User" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"/>
+			<a href="artists.html" id="artists_button" value="Artists" class="btn btn-warning col-md-offset-1" role="button" />
+				Artists
+			</a>
+		</form>
 
-<hr />
-<table id="artists" align="left" border="1" cellpadding="1" cellspacing="1" height="128" width="204">
-	<tbody>
+		<hr />
+		<table id="users" align="left" border="1" cellpadding="1" cellspacing="1" height="128" width="204" class="table table-striped">
+			<tbody>
 
-	</tbody>
-</table>
+			</tbody>
+		</table>
 
-<table id="songs" align="right" border="1" cellpadding="1" cellspacing="1" height="128" width="469">
-	<tbody>
+		<p>&nbsp;</p>
+	</div>
 
-	</tbody>
-</table>
 
-<p>&nbsp;</p>
+	<!-- Modal bootstrap containing the form to add a new user -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="exampleModalLabel">New User</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<input type="text" class="form-control" id="recipient-name" placeholder="Nickname">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="recipient-name" placeholder="Password">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="recipient-name" placeholder="Age">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="recipient-name" placeholder="Country">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="recipient-name" placeholder="Gender">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Send message</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="Bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 

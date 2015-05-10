@@ -248,31 +248,31 @@ class MusicDatabase(object):
                 songs.append(song)
             return songs
 
-    def get_songs(self):
+    # def get_songs(self):
 
-        #Create the SQL Statement
-        keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM songs'
-        #Connects to the database.
-        con = sqlite3.connect(self.db_path)
-        with con:
-            #Cursor and row initialization
-            con.row_factory = sqlite3.Row
-            cur = con.cursor()
-            #Provide support for foreign keys
-            cur.execute(keys_on)
-            #Execute main SQL Statement
-            cur.execute(query)
-            #Get results
-            rows = cur.fetchall()
-            if rows is None:
-                return None
-            #Build the return object
-            songs = []
-            for row in rows:
-                song = self._create_song_object(row)
-                songs.append(song)
-            return songs
+    #     #Create the SQL Statement
+    #     keys_on = 'PRAGMA foreign_keys = ON'
+    #     query = 'SELECT * FROM songs'
+    #     #Connects to the database.
+    #     con = sqlite3.connect(self.db_path)
+    #     with con:
+    #         #Cursor and row initialization
+    #         con.row_factory = sqlite3.Row
+    #         cur = con.cursor()
+    #         #Provide support for foreign keys
+    #         cur.execute(keys_on)
+    #         #Execute main SQL Statement
+    #         cur.execute(query)
+    #         #Get results
+    #         rows = cur.fetchall()
+    #         if rows is None:
+    #             return None
+    #         #Build the return object
+    #         songs = []
+    #         for row in rows:
+    #             song = self._create_song_object(row)
+    #             songs.append(song)
+    #         return songs
 
     def get_playlist(self, name, user):
         #Create the SQL Query

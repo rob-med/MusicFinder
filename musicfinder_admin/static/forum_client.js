@@ -47,8 +47,6 @@ function getArtists() {
 				}			
 			} 
 		}
-		//Set the href of #addUser for creating a new user
-		setNewUserUrl(data.collection.href)
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
@@ -57,10 +55,6 @@ function getArtists() {
 		alert ("Could not fetch the list of users.  Please, try again");
 	});
 }
-
-
-
-
 
 function getSongs(apiurl) {
 	return $.ajax({
@@ -84,10 +78,9 @@ function getSongs(apiurl) {
 		//Show an alert informing that I cannot get info from the user.
 		alert ("Cannot extract information about this user from the forum service.")
 		//Deselect the user from the list.
-		deselectUser()
+		deselectArtist()
 	});
 }
-
 
 function handleGetArtist(event) {
 	if (DEBUG) {
@@ -127,7 +120,6 @@ function handleGetArtist(event) {
 	return false; //IMPORTANT TO AVOID <A> DEFAULT ACTIONS
 }
 
-
 /**
  Creates User resource representation using the data from the form showed in the screen.
  Calls the method addUser to upload the new User resource to the Web service.
@@ -138,6 +130,13 @@ function appendArtistToList(url, nickname) {
 	var $user = $('<tr>').html('<a class= "artist_link" href="'+url+'">'+nickname+'</a>');
 	//Add to the user list
 	$("#artists").append($user);
+	return $user;
+}
+
+function appendUserToList(url, nickname) {
+	var $user = $('<tr>').html('<a class= "artist_link" href="'+url+'">'+nickname+'</a>');
+	//Add to the user list
+	$("#users").append($user);
 	return $user;
 }
 
@@ -165,7 +164,7 @@ INPUT:
  OUTPUT:
   The form as a jquery element.
 */
-function deselectUser() {
+function deselectArtist() {
 	$("#artists li.selected").removeClass("selected");
 	$("#mainContent").hide();
 }

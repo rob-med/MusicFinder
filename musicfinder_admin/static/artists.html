@@ -4,14 +4,14 @@
 	<meta charset="utf-8" />
 	<title>Music Finder</title>
 	<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="playlists.js"></script>
+	<script type="text/javascript" src="forum_client.js"></script>
 	<!-- Bootstrap -->
     <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 	<div class="container-fluid">
-	<h1>Music Finder</h1>
+		<h1>Music Finder</h1>
 		<form class="form-inline">
 			<div class="form-group">
 				<label for="searchLabel">Search nick</label>
@@ -20,12 +20,10 @@
 			<input align="left" id="search_button" type="button" value="Search!" class="btn btn-default" />
 		</form>
 
-		<p align="right">Roberto <a id ="my_playlists" href="playlists.html">My playlists</a>
-		</p>
-
 		<hr />
+
 		<div class="col-md-4">
-		<table id="playlists" align="left" border="1" cellpadding="1" cellspacing="1" height="128" width="204" class="table table-striped">
+		<table id="artists" align="left" border="1" cellpadding="1" cellspacing="1" height="128" width="204" class="table table-striped">
 			<tbody>
 
 			</tbody>
@@ -33,7 +31,7 @@
 		</div>
 
 		<div class="col-md-6">
-		<table id="songsinpl" align="right" border="1" cellpadding="1" cellspacing="1" height="128" width="469" class="table table-striped">
+		<table id="songs" align="right" border="1" cellpadding="1" cellspacing="1" height="128" width="469" class="table table-striped">
 			<tbody>
 
 			</tbody>
