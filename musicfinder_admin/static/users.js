@@ -119,3 +119,66 @@ $(function(){
 })
 /*** END ON LOAD**/
 
+function addUser(apiurl, userData){
+	userData = JSON.stringify(userData);
+	return $.ajax({
+		url: apiurl,
+		type: "POST",
+		//dataType:DEFAULT_DATATYPE, 
+		data:userData,
+		processData:false,
+		contentType: COLLECTIONJSON+";",
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+		alert ("User successfully added");
+		//Add the user to the list and load it.
+		// $user = appendUserToList(jqXHR.getResponseHeader("Location"),nickname);
+		// $user.children("a").click();
+
+	}).fail(function (jqXHR, textStatus, errorThrown){
+		if (DEBUG) {
+			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
+		}
+		alert ("Could not create new user");
+	});
+}
+
+function handleCreateUser() {
+	url = '/musicfinder/api/users/'
+		var envelope={'template':{
+								'data':[]
+	}}; 
+	var data = {};
+	data.name = "nickname";
+	data.value = $("#newNickname").val();
+	envelope.template.data.push(data);
+
+    var data = {};
+    data.name = "password";
+    data.value = $("#newPassword").val();
+	envelope.template.data.push(data);
+   
+    if ($("#newAge").val()) {
+    	var data = {};
+    	data.name = "age";
+    	data.value = $("#newAge").val();
+    	envelope.template.data.push(data);
+    }
+    if ($("#newCountry").val()) {
+    	var data = {};
+    	data.name = "country";
+    	data.value = $("#newCountry").val();
+    	envelope.template.data.push(data);
+
+    }
+    if ($("#newGender").val()) {
+    	var data = {};
+    	data.name = "gender";
+    	data.value = $("#newGender").val();
+    	envelope.template.data.push(data);
+
+    }
+    addUser(url, envelope);
+}

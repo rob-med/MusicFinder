@@ -389,9 +389,9 @@ class MusicDatabase(object):
             #Return the id in
             return cur.lastrowid
 
-    def create_user(self, nickname, password):
+    def create_user(self, nickname, password, age, country, gender):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'INSERT INTO users (nickname,password) VALUES(?,?)'
+        stmnt = 'INSERT INTO users (nickname,password,age,country,gender) VALUES(?,?,?,?,?)'
         con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
@@ -401,7 +401,7 @@ class MusicDatabase(object):
             cur.execute(keys_on)
 
             #Execute SQL Statement to get userid given nickname
-            pvalue = (nickname,password,)
+            pvalue = (nickname,password,age,country,gender,)
             cur.execute(stmnt, pvalue)
             #Extract user id
             #Return the id in

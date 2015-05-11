@@ -631,6 +631,58 @@ class Users(Resource):
         #RENDER
         return envelope
 
+    def post(self):
+        input = request.get_json(force=True)
+        if not input:
+            abort(415)
+
+        #It throws a BadRequest exception, and hence a 400 code if the JSON is
+        #not wellformed
+        try:
+            data = input['template']['data']
+            ipaddress = request.remote_addr
+
+            for d in data:
+                #This code has a bad performance. We write it like this for
+                #simplicity. Another alternative should be used instead.
+                if d['name'] == 'nickname':
+                    nickname = d['value']
+
+                elif d['name'] == 'password':
+                    password = d['value']
+
+                elif d['name'] == 'age':
+                    age = d['value']
+
+                elif d['name'] == 'country':
+                    country = d['value']
+
+                elif d['name'] == 'gender':
+                    gender = d['value']
+
+
+            #CHECK THAT DATA RECEIVED IS CORRECT
+            if not nickname or not password:
+                return create_error_response(400, "Wrong request format",
+                                             "Be sure you include user's nickname and password",
+                                             "users")
+        except:
+            return create_error_response(400, "Wrong request format",
+                                         "Be sure you include user's nickname and password",
+                                         "users")
+
+        #aid = g.db.create_user(nickname, password, age=None, country=None, gender=None)
+        aid = g.db.create_user(nickname, password, age=age, country=country, gender=gender)
+        if not aid:
+            abort(500)
+
+        url = api.url_for(User, nickname=nickname)
+
+
+        #RENDER
+        #Return the response
+        return Response(status=201, headers={'Location':url})
+
 
 class User(Resource):
 
