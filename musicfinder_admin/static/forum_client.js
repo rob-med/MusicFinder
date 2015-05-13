@@ -16,6 +16,7 @@ ONSUCCESS=> Show users in the UI list. It uses appendUserToList for that purpose
 The list contains the url of the users.
 ONERROR => Show an alert to the user
 */
+
 function getArtists() {
 	var apiurl = ENTRYPOINT + "artists/";
 
@@ -141,12 +142,48 @@ function appendUserToList(url, nickname) {
 }
 
 function appendSong(song) {
-	var $user = $('<tr>').html('<p>'+ song[0]["value"]+'</p>' +
-	'<p>' + song[2]["value"] + " (" + song[3]["value"]+ ")</p>");
+	var $user = $('<tr>').html('<td><p>'+ song[0]["value"]+'</p>' +
+	'<p>' + song[2]["value"] + '(' + song[3]["value"]+ ')</p></td>' +
+	'<td><button type="button" class="hooks btn btn-primary btn-lg" data-toggle="modal" data-target="#chooseModal" data-song="' + song[0]["value"] +'" data-artist="'+ song[1]["value"] + '">+</button></td>');
 	//Add to the user list
 	$("#songs").append($user);
 	return $user;
 }
+
+function choosePlaylist(nickname){
+
+    var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/";
+
+	return $.ajax({
+		url: apiurl,
+		dataType:DEFAULT_DATATYPE
+	}).always(function(){
+		//Remove old list of users, clear the form data hide the content information(no selected)
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+		//Extract the users
+    	users = data.collection.items;
+		for (var i=0; i < users.length; i++){
+			var user = users[i];
+			//Extract the nickname by getting the data values. Once obtained
+			// the nickname use the method appendUserToList to show the user
+			// information in the UI.
+			//Data format example:
+			//  [ { "name" : "nickname", "value" : "Mystery" },
+			//    { "name" : "registrationdate", "value" : "2014-10-12" } ]
+			var user_data = user.data;
+			for (var j=0; j<user_data.length;j++){
+				if (user_data[j].name=="name"){
+					$(".dropdown-menu").append('<li role="presentation"><a id="boh" role="menuitem" tabindex="-1" href="#">'+ user_data[j].value + '</a></li>');
+				}
+			}
+		}
+
+});
+}
+
 /*
 Sets the url to add a new user to the list.
 */
@@ -178,13 +215,77 @@ function reloadUserData() {
 	selected.click();
 }
 
+function addPlaylist(apiurl, userData){
+	userData = JSON.stringify(userData);
+	return $.ajax({
+		url: apiurl,
+		type: "POST",
+		//dataType:DEFAULT_DATATYPE,
+		data:userData,
+		processData:false,
+		contentType: COLLECTIONJSON+";",
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+		alert ("Song successfully added!");
+		//Add the user to the list and load it.
+		// $user = appendUserToList(jqXHR.getResponseHeader("Location"),nickname);
+		// $user.children("a").click();
+
+	}).fail(function (jqXHR, textStatus, errorThrown){
+		if (DEBUG) {
+			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
+		}
+		alert ("Could not add the song!");
+	});
+}
+
+function processForm()
+  {
+    var parameters = location.search.substring(1).split("&");
+    return parameters
+  }
 
 /*** START ON LOAD ***/
 //This method is executed when the webpage is loaded.
 $(function(){
-
+    nickname = processForm();
 	$("#artists").on("click","tr a.artist_link", handleGetArtist);
 	getArtists();
+
+    choosePlaylist(nickname);
+    $('#chooseModal').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget) // Button that triggered the modal
+  var song = button.data('song') // Extract info from data-* attributes
+  var artist = button.data('artist')
+  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+  var modal = $(this)
+  modal.find('#artist').text(artist)
+  modal.find('#song').text(song)
+})
+
+
+$(".dropdown").on("click",".dropdown-menu li a", function(){
+url = '/musicfinder/api/users/' + nickname + '/playlists/' + $(this).text() + "/"
+		var envelope={'template':{
+								'data':[]
+	}};
+	var data = {};
+	data.name = "artist";
+	data.value = $("#artist").text();
+	envelope.template.data.push(data);
+
+    var data = {};
+    data.name = "title";
+    data.value = $("#song").text();
+	envelope.template.data.push(data);
+
+    addPlaylist(url, envelope);
+});
+
+
 	//Retrieve list of users from the server
 })
 /*** END ON LOAD**/

@@ -456,7 +456,7 @@ class Playlist(Resource):
         if not song:
             abort(500)
 
-        sid = song['songid']
+        sid = song['sid']
         print sid
 
         aid = g.db.append_song_to_playlist(sid, title, nickname)
@@ -687,7 +687,7 @@ class Users(Resource):
 class User(Resource):
 
     def get(self, nickname):
-        user_db = g.db.get_user(nickname)
+        user_db = g.db.get_user(nickname, request.args.get('password'))
         if not user_db:
             return create_error_response(404, "Unknown user",
                                          "There is no user named %s" % nickname,

@@ -196,11 +196,13 @@ class MusicDatabase(object):
             #Build the return object
             return self._create_song_object(row)
 
-    def get_user(self, nickname):
+    def get_user(self, nickname, password=None):
 
         #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
         query = 'SELECT * FROM users WHERE nickname = ?'
+        if password is not None:
+            query += " AND password = '" + password + "'";
         #Connects to the database. Gets a connection object
         con = sqlite3.connect(self.db_path)
         with con:

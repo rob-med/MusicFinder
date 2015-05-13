@@ -11,8 +11,11 @@ function authenticate() {
 	if (nickInput == "admin" && passInput == "admin") {
 		document.location.href = "admin.html";
 	}
-
-	var apiurl = ENTRYPOINT + "users/" + nickInput; // Get directly the desired user. Avoided the use of getUsers (getting all the users), because it would be
+    if(nickInput == "" || nickInput == null || passInput == null || passInput == ""){
+        alert("Please provide nickname and password.");
+        return;
+     }
+	var apiurl = ENTRYPOINT + "users/" + nickInput + "?password=" + passInput; // Get directly the desired user. Avoided the use of getUsers (getting all the users), because it would be
 													// neccessary to loop between all of them. Doing like this the load is on the database.
 	return $.ajax({
 		url: apiurl,
@@ -27,28 +30,13 @@ function authenticate() {
 		if (data.nickname == nickInput) {
 			document.location.href = "playlists.html?"+nickInput; // Jump the the playlist page of the chosen user (/playsists.html?user)
 		}
-		//Extract the users
-    	//users = data.collection.items;
-		// for (var i=0; i < users.length; i++){
-		// 	var user = users[i];
-		// 	//Extract the nickname by getting the data values. Once obtained
-		// 	// the nickname use the method appendUserToList to show the user
-		// 	// information in the UI.
-		// 	//Data format example:
-		// 	//  [ { "name" : "nickname", "value" : "Mystery" },
-		// 	//    { "name" : "registrationdate", "value" : "2014-10-12" } ]
-		// 	var user_data = user.data;
-		// 	for (var j=0; j<user_data.length;j++){
-		// 		if (user_data[j].name=="nickname" && user_data[j].value){
-		// 		}			
-		// 	} 
-		// }
+
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
 		//Inform user about the error using an alert message.
-		alert ("Could not fetch the list of users.  Please, try again");
+		alert ("Wrong nickname or password.  Please, try again");
 	});
 
 }

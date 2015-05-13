@@ -33,13 +33,44 @@
 		<div class="col-md-6">
 		<table id="songs" align="right" border="1" cellpadding="1" cellspacing="1" height="128" width="469" class="table table-striped">
 			<tbody>
-
+            <tr>
+            <th>Song</th><th>Add to playlist</th>
+</tr>
 			</tbody>
 		</table>
 		</div>
 
 		<p>&nbsp;</p>
 	</div>
+
+<!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="chooseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add to playlist</h4>
+      </div>
+      <div class="modal-body">
+          <p id="song"></p>
+          <p id="artist"></p>
+<div class="dropdown" id="rows">
+    <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Choose playlist
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+      </ul>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+	<script src="Bootstrap/js/bootstrap.min.js"></script>
+
 </body>
 
 

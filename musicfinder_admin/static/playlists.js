@@ -259,5 +259,6 @@ $(function(){
     $("#playlists").on("click", "tr a.playlist_link", handleGetUser);
 	getPlaylists(nickname); // Show just the playlist of the chosen user.
 	$("#nickShowed").text(nickname); // Put the nickname just next to the title (in the header with id=nickShowed).
+    $("#artbutt").attr("href", "artists.html?" + nickname);
 })
 /*** END ON LOAD**/

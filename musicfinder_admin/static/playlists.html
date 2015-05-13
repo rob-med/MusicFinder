@@ -19,8 +19,10 @@
 			</div>
 			<input align="left" id="search_button" type="button" value="Search!" class="btn btn-default" />
 			<input align="left" id="new_playlist_button" type="button" value="New Playlist" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"/>
-			<input align="left" id="new_Song_button" type="button" value="New Song" class="btn btn-primary" data-toggle="modal" data-target="#songModal"/>
-		</form>
+            <a href="#" id="artbutt" value="Artists" class="btn btn-warning col-md-offset-1" role="button" />
+				Artists
+			</a>
+        </form>
 
 		<hr />
 		<div class="col-md-4">
@@ -65,31 +67,6 @@
 		</div>
 	</div>
 
-	<!-- Modal bootstrap containing the form to add a new song -->
-	<div class="modal fade" id="songModal" tabindex="-1" role="dialog" aria-labelledby="songModal" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="exampleModalLabel">Add Song</h4>
-				</div>
-				<div class="modal-body">
-					<form>	
-						<div class="form-group">
-							<input type="text" class="form-control" id="songInput" placeholder="Song's name">
-						</div>
-						<div class="form-group">
-							<input type="text" class="form-control" id="artistInput" placeholder="Artist's name">
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary" onclick="handleCreatePlaylist()">Save Song</button>
-				</div>
-			</div>
-		</div>
-	</div>
 	<script src="Bootstrap/js/bootstrap.min.js"></script>
 </body>
 
