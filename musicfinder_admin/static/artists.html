@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<title>Music Finder</title>
 	<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="forum_client.js"></script>
+	<script type="text/javascript" src="artists.js"></script>
 	<!-- Bootstrap -->
     <link href="Bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -14,10 +14,12 @@
 		<h1>Music Finder</h1>
 		<form class="form-inline">
 			<div class="form-group">
-				<label for="searchLabel">Search nick</label>
-				<input align="left" id="name" type="text" class="form-control"/>
+				<input align="left" id="artist_input" type="artist_input" class="form-control" placeholder="Artist"/>
+				<input align="left" id="country_input" type="country_input" class="form-control" placeholder="Country"/>
+				<input align="left" id="language_input" type="language_input" class="form-control" placeholder="Language"/>
+				<input align="left" id="genre_input" type="genre_input" class="form-control" placeholder="Genre"/>
 			</div>
-			<input align="left" id="search_button" type="button" value="Search!" class="btn btn-default" />
+			<input align="left" id="search_button" type="button" value="Search!" class="btn btn-default" onclick="search()"/>
 		</form>
 
 		<hr />

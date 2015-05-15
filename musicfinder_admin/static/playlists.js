@@ -74,6 +74,34 @@ function handleGetUser(event) {
 	return false; //IMPORTANT TO AVOID <A> DEFAULT ACTIONS
 }
 
+function search() {
+	nickname = processForm(); // Get the user's nickname passed as parameter through the page neme (/playlists.html?nickname). It takes the name after the question mark.
+	playlistInput = $('#playlistInput').val();
+	var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/"+playlistInput+"/";
+
+	return $.ajax({
+		url: apiurl,
+		dataType:DEFAULT_DATATYPE
+	}).always(function(){
+		$("#playlists").empty();
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+    	playlist = data.name;
+    	href = data._links.collection.href;
+    	appendUserToList(href+playlist+"/", playlist);
+    	
+
+	}).fail(function (jqXHR, textStatus, errorThrown){
+		if (DEBUG) {
+			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
+		}
+		//Inform user about the error using an alert message.
+		alert ("Could not find the playlist.  Please, try again");
+	});
+}
+
 // It get all the songs that will be visualize in the table of the right, in the user's playlist page.
 function handleGetsongs() {
 	if (DEBUG) {

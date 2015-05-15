@@ -86,6 +86,12 @@ class Artists(Resource):
             artist['data'].append(value)
             value = {'name':'genre', 'value':_genre}
             artist['data'].append(value)
+            value = {'name':'country', 'value':_country}
+            artist['data'].append(value)
+            value = {'name':'language', 'value':_language}
+            artist['data'].append(value)
+            value = {'name':'formed in', 'value':_formed_in}
+            artist['data'].append(value)
 
             artist['links'] = []
             items.append(artist)

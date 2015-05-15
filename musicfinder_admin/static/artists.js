@@ -121,6 +121,71 @@ function handleGetArtist(event) {
 	return false; //IMPORTANT TO AVOID <A> DEFAULT ACTIONS
 }
 
+function search() {
+	var apiurl = ENTRYPOINT + "artists/";
+
+	artistInput = $('#artist_input').val();
+	countryInput = $('#country_input').val();
+	languageInput = $('#language_input').val();
+	genreInput = $('#genre_input').val();
+
+	return $.ajax({
+		url: apiurl,
+		dataType:DEFAULT_DATATYPE
+	}).always(function(){
+		$("#artists").empty();
+		$("#songs").empty();
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+		//Extract the users
+    	artists = data.collection.items;
+		for (var i=0; i < artists.length; i++){
+			artist = artists[i];
+			artist_data = artist.data; 
+			for (var j=0; j<artist_data.length;j++){
+				if (artist_data[j].name=="name"){        
+					artistName = artist_data[j].value;      // Get the name of the artist in the form
+				}
+				if (artist_data[j].name=="genre"){
+					artistGenre = artist_data[j].value;     // Get the genre of the artist in the form
+				}
+				if (artist_data[j].name=="country"){
+					artistCountry = artist_data[j].value;   // Get the country of the artist in the form
+				}
+				if (artist_data[j].name=="language"){
+					artistLanguage = artist_data[j].value;  // Get the language of the artist in the form
+				}			
+			}
+
+			if (!artistName) {
+
+			} else if ((artistInput && artistName.toLowerCase().indexOf(artistInput.toLowerCase())>-1) || !artistInput) {
+				if (!artistCountry) {
+
+				} else if ((countryInput && artistCountry.toLowerCase().indexOf(countryInput.toLowerCase())>-1) || !countryInput) {
+					if (!artistLanguage) {
+
+					} else if ((languageInput && artistLanguage.toLowerCase().indexOf(languageInput.toLowerCase())>-1) || !languageInput) {
+						if (!artistGenre) {
+
+						} else if ((genreInput && artistGenre.toLowerCase().indexOf(genreInput.toLowerCase())>-1) || !genreInput) {
+							appendArtistToList(artist.href, artistName);
+						}
+					}
+				}
+			}
+		}
+	}).fail(function (jqXHR, textStatus, errorThrown){
+		if (DEBUG) {
+			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
+		}
+		//Inform user about the error using an alert message.
+		alert ("Could not fetch the list of users.  Please, try again");
+	});
+}
+
 /**
  Creates User resource representation using the data from the form showed in the screen.
  Calls the method addUser to upload the new User resource to the Web service.
