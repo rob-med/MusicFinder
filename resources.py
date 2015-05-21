@@ -719,7 +719,7 @@ class User(Resource):
         except:
             abort(400)
         else:
-            if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary("country", None), dictionary.get("gender", None)):
+            if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary.get("country", None), dictionary.get("gender", None)):
                 return NotFound()
             return '', 204
 

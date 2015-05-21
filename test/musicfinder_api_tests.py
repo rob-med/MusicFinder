@@ -306,7 +306,7 @@ class UserTestCase (ResourcesAPITestCase):
 
 class PlaylistTestCase (ResourcesAPITestCase):
    
-    url = '/musicfinder/api/users/Robi/playlists/Posted/'
+    url = '/musicfinder/api/users/robi/playlists/Posted/'
     links_number = 3
     template_data_number = 3
 #     url_nickname = 'AxelW'
