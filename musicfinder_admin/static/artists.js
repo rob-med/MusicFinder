@@ -77,7 +77,7 @@ function getSongs(apiurl) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
 		//Show an alert informing that I cannot get info from the user.
-		alert ("Cannot extract information about this user from the forum service.")
+		alert ("Cannot retrieve songs.")
 		//Deselect the user from the list.
 		deselectArtist()
 	});
@@ -87,26 +87,7 @@ function handleGetArtist(event) {
 	if (DEBUG) {
 		console.log ("Triggered handleGetUser")
 	}
-	event.preventDefault();//Avoid default link behaviour
-	//TODO 2
-	// This event is triggered by the a.user_link element. Hence, $(this)
-	// is the <a> that the user has pressed. $(this).parent() is the li element
-	// containing such anchor.
-	//
-	// Use the method event.preventDefault() in order to avoid default action
-	// for anchor links. 
-	//
-	// Remove the class "selected" from the previous #user_list li element and
-	// add it to the current #user_list li element. Remember, the current 
-	// #user_list li element is $(this).parent()
-    //
-	//
-	// Finally extract the href attribute from the current anchor ($(this)
-	// and call the  method getUser(url) to make the corresponding HTTP call 
-	// to the RESTful API. You can extract an HTML attribute using the 
-	// attr("attribute_name") method  from JQuery.
-	//
-	//
+	event.preventDefault();
 
 	$(".selected").removeClass("selected");
     $(this).parent().addClass("selected");
@@ -186,12 +167,6 @@ function search() {
 	});
 }
 
-/**
- Creates User resource representation using the data from the form showed in the screen.
- Calls the method addUser to upload the new User resource to the Web service.
- TRIGGER: Submit button with value Create from form #create_user_form 
-**/
-
 function appendArtistToList(url, nickname) {
 	var $user = $('<tr>').html('<a class= "artist_link" href="'+url+'">'+nickname+'</a>');
 	//Add to the user list
@@ -232,12 +207,6 @@ function choosePlaylist(nickname){
     	users = data.collection.items;
 		for (var i=0; i < users.length; i++){
 			var user = users[i];
-			//Extract the nickname by getting the data values. Once obtained
-			// the nickname use the method appendUserToList to show the user
-			// information in the UI.
-			//Data format example:
-			//  [ { "name" : "nickname", "value" : "Mystery" },
-			//    { "name" : "registrationdate", "value" : "2014-10-12" } ]
 			var user_data = user.data;
 			for (var j=0; j<user_data.length;j++){
 				if (user_data[j].name=="name"){
@@ -249,23 +218,6 @@ function choosePlaylist(nickname){
 });
 }
 
-/*
-Sets the url to add a new user to the list.
-*/
-/*
-Creates a form with the values coming from the template.
-
-INPUT:
- * url=Value that will be writtn in the action attribute.
- * template=Collection+JSON template which contains all the attributes to be shown.
- * id = unique id assigned to the form.
- * button_name = the text written on associated button. It can be null;
- * handler= function executed when the button is pressed. If button_name is null
-   it must be null.
-
- OUTPUT:
-  The form as a jquery element.
-*/
 function deselectArtist() {
 	$("#artists li.selected").removeClass("selected");
 	$("#mainContent").hide();
@@ -302,7 +254,7 @@ function addPlaylist(apiurl, userData){
 		if (DEBUG) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
-		alert ("Could not add the song!");
+		alert ("Could not add the song.");
 	});
 }
 

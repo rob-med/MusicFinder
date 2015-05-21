@@ -82,16 +82,12 @@ class Artists(Resource):
             artist = {}
             artist['href'] = _url
             artist['data'] = []
-            value = {'name':'name', 'value':_name}
-            artist['data'].append(value)
-            value = {'name':'genre', 'value':_genre}
-            artist['data'].append(value)
-            value = {'name':'country', 'value':_country}
-            artist['data'].append(value)
-            value = {'name':'language', 'value':_language}
-            artist['data'].append(value)
-            value = {'name':'formed in', 'value':_formed_in}
-            artist['data'].append(value)
+
+            ss = [('name',_name), ('genre', _genre), ('country',_country), ('language',_language),
+                ('formed_in', _formed_in)]
+            for s in ss:
+                value = {'name': s[0], 'value': s[1]}
+                artist['data'].append(value)
 
             artist['links'] = []
             items.append(artist)
@@ -103,32 +99,15 @@ class Artists(Resource):
         if not input:
             abort(415)
 
-        #It throws a BadRequest exception, and hence a 400 code if the JSON is
-        #not wellformed
+
         try:
             data = input['template']['data']
-            ipaddress = request.remote_addr
-
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'name':
-                    name = d['value']
-                elif d['name'] == 'genre':
-                    genre = d['value']
-
-                elif d['name'] == 'country':
-                    country = d['value']
-
-                elif d['name'] == 'language':
-                    language = d['value']
-
-                elif d['name'] == 'formed_in':
-                    formed_in = d['value']
-
-
+                tt = d['name']
+                dictionary[tt] = d['value']
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not name or not genre:
+            if not dictionary['name'] or not dictionary['genre']:
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include artist's name and genre",
                                              "Artists")
@@ -137,11 +116,10 @@ class Artists(Resource):
                                          "Be sure you include artist's name and genre",
                                          "Artists")
 
-        aid = g.db.create_artist(name, genre, country=None, language=None, formed_in=None)
+        aid = g.db.create_artist(dictionary['name'], dictionary['genre'], dictionary.get('country', None), dictionary.get('language', None), dictionary.get('formed_in', None))
         if not aid:
             abort(500)
-
-        url = api.url_for(Artist, name=name)
+        url = api.url_for(Artist, artist=dictionary['name'])
 
         #RENDER
         #Return the response
@@ -237,14 +215,10 @@ class Songs(Resource):
             song = {}
             song['href'] = _url
             song['data'] = []
-            value = {'name':'title', 'value':_title}
-            song['data'].append(value)
-            value = {'name':'artist', 'value':artist}
-            song['data'].append(value)
-            value = {'name':'length', 'value':_length}
-            song['data'].append(value)
-            value = {'name':'year', 'value':_year}
-            song['data'].append(value)
+            ss = [('title',_title), ('artist', artist), ('length',_length), ('year',_year)]
+            for s in ss:
+                value = {'name': s[0], 'value': s[1]}
+                song['data'].append(value)
 
             song['links'] = []
             items.append(song)
@@ -264,18 +238,13 @@ class Songs(Resource):
             length = None
             year = None
 
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'title':
-                    title = d['value']
-                elif d['name'] == 'length':
-                    length = d['value']
-                elif d['name'] == 'year':
-                    year = d['value']
+                tt = d['name']
+                dictionary[tt] = d['value']
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not title:
+            if not dictionary.get('title', None):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include song's title",
                                              "Songs")
@@ -287,7 +256,7 @@ class Songs(Resource):
                                          "Artists")
 
 
-        aid = g.db.create_song(title, year, length, artist)
+        aid = g.db.create_song(dictionary.get('title'), dictionary.get('year', None), dictionary.get('length', None), artist)
         if not aid:
             abort(500)
 
@@ -436,18 +405,16 @@ class Playlist(Resource):
         #not wellformed
         try:
             data = input['template']['data']
-            artist = None
-            song_title = None
+
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'artist':
-                    artist = d['value']
-                elif d['name'] == 'title':
-                    song_title = d['value']
+                tt = d['name']
+                dictionary[tt] = d['value']
+
+
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not artist or not song_title:
+            if not dictionary.get("artist", "None") or not dictionary.get('title',"None"):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include song's title and artist",
                                              "Playlist")
@@ -457,8 +424,7 @@ class Playlist(Resource):
             return create_error_response(400, "Wrong request format",
                                          "Be sure you include song's title and artist",
                                          "Playlist")
-        song = g.db.get_song(artist, song_title)
-        str(song)
+        song = g.db.get_song(dictionary.get("artist"),dictionary.get("title"))
         if not song:
             abort(500)
 
@@ -503,25 +469,20 @@ class Playlist(Resource):
         #not wellformed
         try:
             data = input['template']['data']
-            new_title = None
-            new_user = None
-            created_on = None
+
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'name':
-                    new_title = d['value']
-                elif d['name'] == 'user':
-                    new_user = d['value']
-                elif d['name'] == 'created_on':
-                    created_on = d['value']
+                tt = d['name']
+                dictionary[tt] = d['value']
+
+
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not new_title or not new_user:
+            if not dictionary.get("name", None) or not dictionary.get("user", None):
                 abort(400)
         except:
             abort(400)
         else:
-            if not g.db.modify_playlist(nickname, title, new_user, new_title, created_on):
+            if not g.db.modify_playlist(nickname, title, dictionary.get("user"), dictionary.get("title"), dictionary.get("created_on")):
                 return NotFound()
             return '', 204
 
@@ -556,14 +517,11 @@ class Playlist_songs(Resource):
             song = {}
             song['href'] = _url
             song['data'] = []
-            value = {'name':'title', 'value':_title}
-            song['data'].append(value)
-            value = {'name':'artist', 'value': _artist}
-            song['data'].append(value)
-            value = {'name':'length', 'value':_length}
-            song['data'].append(value)
-            value = {'name':'year', 'value':_year}
-            song['data'].append(value)
+
+            ss = [('title',_title), ('artist', _artist), ('length',_length), ('year',_year)]
+            for s in ss:
+                value = {'name': s[0], 'value': s[1]}
+                song['data'].append(value)
 
             song['links'] = []
             items.append(song)
@@ -617,14 +575,11 @@ class Users(Resource):
             user['href'] = _url
             user['read-only'] = True
             user['data'] = []
-            value = {'name':'nickname', 'value':_nickname}
-            user['data'].append(value)
-            value = {'name':'gender', 'value':_gender}
-            user['data'].append(value)
-            value = {'name':'country', 'value':_country}
-            user['data'].append(value)
-            value = {'name':'age', 'value':_age}
-            user['data'].append(value)
+
+            ss = [('nickname',_nickname), ('gender', _gender), ('country',_country), ('age',_age)]
+            for s in ss:
+                value = {'name': s[0], 'value': s[1]}
+                user['data'].append(value)
 
             user['links'] = [{
                              'href':_playlist_url,
@@ -646,29 +601,15 @@ class Users(Resource):
         #not wellformed
         try:
             data = input['template']['data']
-            ipaddress = request.remote_addr
 
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'nickname':
-                    nickname = d['value']
-
-                elif d['name'] == 'password':
-                    password = d['value']
-
-                elif d['name'] == 'age':
-                    age = d['value']
-
-                elif d['name'] == 'country':
-                    country = d['value']
-
-                elif d['name'] == 'gender':
-                    gender = d['value']
+                tt = d['name']
+                dictionary[tt] = d['value']
 
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not nickname or not password:
+            if not dictionary.get("nickname", None) or not dictionary.get("password", None):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include user's nickname and password",
                                              "users")
@@ -678,11 +619,11 @@ class Users(Resource):
                                          "users")
 
         #aid = g.db.create_user(nickname, password, age=None, country=None, gender=None)
-        aid = g.db.create_user(nickname, password, age=age, country=country, gender=gender)
+        aid = g.db.create_user(dictionary.get("nickname"), dictionary.get("password"), dictionary.get("age", None), dictionary.get("country", None), dictionary.get("gender", None))
         if not aid:
             abort(500)
 
-        url = api.url_for(User, nickname=nickname)
+        url = api.url_for(User, nickname=dictionary.get("nickname"))
 
 
         #RENDER
@@ -770,23 +711,15 @@ class User(Resource):
         #not wellformed
         try:
             data = input['template']['data']
-            age = None
-            country = None
-            gender = None
+            dictionary = {}
             for d in data:
-                #This code has a bad performance. We write it like this for
-                #simplicity. Another alternative should be used instead.
-                if d['name'] == 'age':
-                    age = d['value']
-                elif d['name'] == 'country':
-                    country = d['value']
-                elif d['name'] == 'gender':
-                    gender = d['value']
+                tt = d['name']
+                dictionary[tt] = d['value']
 
         except:
             abort(400)
         else:
-            if not g.db.modify_user(nickname, age, country, gender):
+            if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary("country", None), dictionary.get("gender", None)):
                 return NotFound()
             return '', 204
 
@@ -817,12 +750,11 @@ class User_playlists(Resource):
             pl = {}
             pl['href'] = _url
             pl['data'] = []
-            value = {'name':'name', 'value':_title}
-            pl['data'].append(value)
-            value = {'name':'user', 'value':_user}
-            pl['data'].append(value)
-            value = {'name':'created_on', 'value':_created_on}
-            pl['data'].append(value)
+
+            ss = [('name',_title), ('user', _user), ('created_on',_created_on)]
+            for s in ss:
+                value = {'name': s[0], 'value': s[1]}
+                pl['data'].append(value)
 
             pl['links'] = []
             items.append(pl)

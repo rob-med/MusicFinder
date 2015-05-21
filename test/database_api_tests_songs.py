@@ -109,19 +109,6 @@ class SongsDbAPITestCase(BaseTestCase):
             if song['title'] == self.song1['title']:
                 self.assertDictContainsSubset(song, self.song1)
 
-    # def test_get_songs_specific_genre(self):
-    #     '''
-    #     Get all artists from user Mystery. Check that their ids are 13 and 14.
-    #     '''
-    #     #artists sent from Mystery are 13 and 14
-    #     print '('+self.test_get_artists_specific_genre.__name__+')', \
-    #     self.test_get_artists_specific_genre.__doc__
-    #     artists = db.get_artists(genre = 'Rock')
-    #     self.assertEquals(len(artists), 3)
-    #     #artists id are 13 and 14
-    #     for artist in artists:
-    #         self.assertIn(artist['name'], ('Cranberries', 'Muse', 'Mana'))
-    #         self.assertNotIn(artist['name'], ('Clap! Clap!'))
 
     def test_create_song(self):
         '''

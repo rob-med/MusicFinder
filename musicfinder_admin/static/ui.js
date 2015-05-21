@@ -15,8 +15,7 @@ function authenticate() {
         alert("Please provide nickname and password.");
         return;
      }
-	var apiurl = ENTRYPOINT + "users/" + nickInput + "?password=" + passInput; // Get directly the desired user. Avoided the use of getUsers (getting all the users), because it would be
-													// neccessary to loop between all of them. Doing like this the load is on the database.
+	var apiurl = ENTRYPOINT + "users/" + nickInput + "?password=" + passInput;
 	return $.ajax({
 		url: apiurl,
 		dataType:DEFAULT_DATATYPE
@@ -55,9 +54,7 @@ function addUser(apiurl, userData){
 			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
 		}
 		alert ("User successfully added");
-		//Add the user to the list and load it.
-		// $user = appendUserToList(jqXHR.getResponseHeader("Location"),nickname);
-		// $user.children("a").click();
+
 
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {

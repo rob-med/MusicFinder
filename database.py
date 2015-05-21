@@ -177,23 +177,18 @@ class MusicDatabase(object):
         #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
         query = 'SELECT * FROM songs WHERE artist = ? and title = ?'
-        #Connects to the database. Gets a connection object
         con = sqlite3.connect(self.db_path)
         with con:
-            #Cursor and row initialization
             con.row_factory = sqlite3.Row
             cur = con.cursor()
-            #Provide support for foreign keys
             cur.execute(keys_on)
-            #Execute main SQL Statement
             pvalue = (artist, title,)
             cur.execute(query, pvalue)
-            #Process the response.
-            #Just one row is expected
+
             row = cur.fetchone()
             if row is None:
                 return None
-            #Build the return object
+
             return self._create_song_object(row)
 
     def get_user(self, nickname, password=None):
@@ -203,100 +198,62 @@ class MusicDatabase(object):
         query = 'SELECT * FROM users WHERE nickname = ?'
         if password is not None:
             query += " AND password = '" + password + "'";
-        #Connects to the database. Gets a connection object
+
         con = sqlite3.connect(self.db_path)
         with con:
-            #Cursor and row initialization
             con.row_factory = sqlite3.Row
             cur = con.cursor()
-            #Provide support for foreign keys
             cur.execute(keys_on)
-            #Execute main SQL Statement
             pvalue = (nickname,)
             cur.execute(query, pvalue)
-            #Process the response.
-            #Just one row is expected
             row = cur.fetchone()
             if row is None:
                 return None
-            #Build the return object
             return self._create_user_object(row)
 
 
-    def get_songs(self, artist):
+    def get_songs(self, artist=None):
 
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM songs where artist = ?'
-        #Connects to the database.
+        query = 'SELECT * FROM songs'
+        if artist is  not None:
+            query += ' where artist = ?'
         con = sqlite3.connect(self.db_path)
         with con:
-            #Cursor and row initialization
             con.row_factory = sqlite3.Row
             cur = con.cursor()
-            #Provide support for foreign keys
             cur.execute(keys_on)
-            #Execute main SQL Statement
-            pvalue = (artist,)
-            cur.execute(query, pvalue)
-            #Get results
+            if artist is not None:
+                pvalue = (artist,)
+                cur.execute(query, pvalue)
+            else:
+                cur.execute(query)
+
             rows = cur.fetchall()
             if rows is None:
                 return None
-            #Build the return object
+
             songs = []
             for row in rows:
                 song = self._create_song_object(row)
                 songs.append(song)
             return songs
 
-    # def get_songs(self):
-
-    #     #Create the SQL Statement
-    #     keys_on = 'PRAGMA foreign_keys = ON'
-    #     query = 'SELECT * FROM songs'
-    #     #Connects to the database.
-    #     con = sqlite3.connect(self.db_path)
-    #     with con:
-    #         #Cursor and row initialization
-    #         con.row_factory = sqlite3.Row
-    #         cur = con.cursor()
-    #         #Provide support for foreign keys
-    #         cur.execute(keys_on)
-    #         #Execute main SQL Statement
-    #         cur.execute(query)
-    #         #Get results
-    #         rows = cur.fetchall()
-    #         if rows is None:
-    #             return None
-    #         #Build the return object
-    #         songs = []
-    #         for row in rows:
-    #             song = self._create_song_object(row)
-    #             songs.append(song)
-    #         return songs
-
     def get_playlist(self, name, user):
-        #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
         query = 'SELECT * FROM playlists where user = ? and name = ?'
-        #Connects to the database. Gets a connection object
         con = sqlite3.connect(self.db_path)
         with con:
-            #Cursor and row initialization
             con.row_factory = sqlite3.Row
             cur = con.cursor()
-            #Provide support for foreign keys
             cur.execute(keys_on)
-            #Execute main SQL Statement
             pvalue = (user, name)
             cur.execute(query, pvalue)
-            #Process the response.
-            #Just one row is expected
             row = cur.fetchone()
             if row is None:
                 return None
-            #Build the return object
+
             return self._create_playlist_object(row)
 
     def get_playlists(self, user):

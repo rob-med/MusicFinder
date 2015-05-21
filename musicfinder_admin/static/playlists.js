@@ -8,17 +8,7 @@ FORUM_USER_PROFILE = "http://atlassian.virtues.fi:8090/display/PWP/Exercise+4#Ex
 FORUM_MESSAGE_PROFILE = "http://atlassian.virtues.fi:8090/display/PWP/Exercise+4#Exercise4-Forum_Message",
 DEFAULT_DATATYPE = "json",
 ENTRYPOINT = "/musicfinder/api/" //Entry point is getUsers()
-/**** END CONSTANTS****/
 
-/**** START RESTFUL CLIENT****/
-/*
-getUsers is the entrypoint of the application.
-
-Sends an AJAX request to retrive the list of all the users of the application
-ONSUCCESS=> Show users in the UI list. It uses appendUserToList for that purpose.
-The list contains the url of the users.
-ONERROR => Show an alert to the user
-*/
 
 function getPlaylists(nickname) {
 	var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/";
@@ -38,12 +28,6 @@ function getPlaylists(nickname) {
     	users = data.collection.items;
 		for (var i=0; i < users.length; i++){
 			var user = users[i];
-			//Extract the nickname by getting the data values. Once obtained
-			// the nickname use the method appendUserToList to show the user
-			// information in the UI.
-			//Data format example:
-			//  [ { "name" : "nickname", "value" : "Mystery" },
-			//    { "name" : "registrationdate", "value" : "2014-10-12" } ]
 			var user_data = user.data;
 			for (var j=0; j<user_data.length;j++){
 				if (user_data[j].name=="name"){
@@ -107,12 +91,9 @@ function handleGetsongs() {
 	if (DEBUG) {
 		console.log ("Triggered handleGetSongs")
 	}
-	event.preventDefault();//Avoid default link behaviour
-	// $(".selected").removeClass("selected");
- //    $(this).parent().addClass("selected");
- //    var href = $(this).attr("href");
+	event.preventDefault();
     getUser();
-	return false; //IMPORTANT TO AVOID <A> DEFAULT ACTIONS
+	return false;
 }
 
 function appendUserToList(url, nickname) {
@@ -172,7 +153,7 @@ function getSongs() {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
 		//Show an alert informing that I cannot get info from the user.
-		alert ("Cannot extract information about this user from the forum service.")
+		alert ("Cannot retrieve songs")
 		//Deselect the user from the list.
 		deselectUser()
 	});
