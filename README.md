@@ -16,7 +16,26 @@ Once the server has run, showing the writing "Running on http://localhost:5000",
 
 Testing the code
 
-To test the artists resource use the following command from the main folder: "python -m test.database_api_tests_artists"
-To test the songs resource use the following command from the main folder: "python -m test.database_api_tests_songs"
-To test the user resource use the following command from the main folder: "python -m test.database_api_tests_user"
+To test the database acces to the artists resource use the following command from the main folder: "python -m test.database_api_tests_artists"
+To test the database acces to the songs resource use the following command from the main folder: "python -m test.database_api_tests_songs"
+To test the database acces to the user's resource use the following command from the main folder: "python -m test.database_api_tests_user"
 To test the user REST-ful API use the following command from the main folder: "python -m test.musicfinder_api_tests"
+
+External dependencies
+
+The GUI uses the library JQuery (v 1.11.2), and it's contained in the folder "musicfinder/musicfinder_admin/static/"
+The GUI uses the framework Bootstrap (v 3.3.4) and it's contained in the folder "musicfinder/musicfinder_admin/static/bootstrap" (the folder contains the css, fonts and javascript functions in the relative sub-folders)
+It has been used the library "unittest" of Python for testing (http://docs.python.org/2/library/unittest.html).
+
+RESTful API
+
+ENTRYPOINT = /musicfinder/api/
+Artists = /musicfinder/api/artists/
+Artist = /musicfinder/api/artists/<artist>/
+Songs = /musicfinder/api/artists/<artist>/songs/
+Song = /musicfinder/api/artists/<artist>/songs/<title>
+Users = /musicfinder/api/users/
+User = /musicfinder/api/users/<nickname>/
+User_playlists = /musicfinder/api/users/<nickname>/playlists/
+Playlist = /musicfinder/api/users/<nickname>/playlists/<title>/
+Playlist_songs = /musicfinder/api/users/<nickname>/playlists/<title>/songs/
