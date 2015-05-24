@@ -98,7 +98,7 @@ class UserDbAPITestCase(BaseTestCase):
  
     def test_get_user_noexistingid(self):
         '''
-        Test get_user with  msg-200 (no-existing)
+        Test get_user with id=Nobody
         '''
         print '('+self.test_get_user_noexistingid.__name__+')', \
               self.test_get_user_noexistingid.__doc__
@@ -125,7 +125,7 @@ class UserDbAPITestCase(BaseTestCase):
 
     def test_delete_user(self):
         '''
-        Test that the user Mystery is deleted
+        Test that the user Robi is deleted
         '''
         print '('+self.test_delete_user.__name__+')', \
               self.test_delete_user.__doc__
@@ -140,7 +140,7 @@ class UserDbAPITestCase(BaseTestCase):
 
     def test_delete_user_noexistingnickname(self):
         '''
-        Test delete_user with  Batty (no-existing)
+        Test delete_user with nickname Nobody (no-existing)
         '''
         print '('+self.test_delete_user_noexistingnickname.__name__+')', \
               self.test_delete_user_noexistingnickname.__doc__
@@ -150,7 +150,7 @@ class UserDbAPITestCase(BaseTestCase):
 
     def test_modify_user(self):
         '''
-        Test that the user Mystery is modifed
+        Test that the information of the user Roby are changed correctly
         '''
         print '('+self.test_modify_user.__name__+')', \
               self.test_modify_user.__doc__
@@ -167,7 +167,7 @@ class UserDbAPITestCase(BaseTestCase):
 
     def test_modify_user_noexistingnickname(self):
         '''
-        Test modify_user with  user Batty (no-existing)
+        Test modify_user with user Nobody (no-existing)
         '''
         print '('+self.test_modify_user_noexistingnickname.__name__+')', \
               self.test_modify_user_noexistingnickname.__doc__

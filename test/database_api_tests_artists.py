@@ -105,15 +105,14 @@ class ArtistsDbAPITestCase(BaseTestCase):
         artists = db.get_artists()
         #Check that the size is correct
         self.assertEquals(len(artists), self.initial_size)
-        #Iterate throug artists and check if the artists with artist1_id and
-        #artist2_id are correct:
+        #Iterate through artists and check if the artists with artist1_id are correct:
         for artist in artists:
             if artist['name'] == self.artist1['name']:
                 self.assertDictContainsSubset(artist, self.artist1)
 
     def test_get_artists_specific_genre(self):
         '''
-        Get all artists from user Mystery. Check that their ids are 13 and 14.
+        Get all artists with genre=Rock.
         '''
         #artists sent from Mystery are 13 and 14
         print '('+self.test_get_artists_specific_genre.__name__+')', \

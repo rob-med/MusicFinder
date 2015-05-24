@@ -160,26 +160,10 @@ class ArtistTestCase (ResourcesAPITestCase):
             data = json.loads(resp.data)
             #The data is formed by links and message
             links = data['_links']
-            #message = data ['message']
-
             #Check that the link format is correct
             self.assertEquals(len(links), 3)
-            # link0 = links[0]
-            # self.assertEquals(link0['title'],'messages')
-            # self.assertEquals(link0['rel'],'collection')
-            # self.assertEquals(link0['href'], resources.api.url_for(resources.Messages))
-            
-            #Check that the artist contains all required attributes
             for attribute in ('name', 'language', 'country', 'genre'):
                 self.assertIn(attribute, data)
-
-            #Check that the sender format is correct
-            # sender = message['sender']
-            # for attribute in ('href','rel','title'):
-            #     self.assertIn(attribute, sender)
-            
-            #Check that we provide the correct user
-            # self.assertEquals(resources.api.url_for(resources.Artist, nickname=sender['title']), sender['href'])
 
     def test_add_artist(self):
         '''
@@ -277,53 +261,12 @@ class UserTestCase (ResourcesAPITestCase):
         resp2 = self.client.get(self.url2)
         self.assertEquals(resp2.status_code, 200)    
 
-    
-    # def test_add_user_missing_mandatory(self):
-    #     '''
-    #     Test that it returns error when is missing a mandatory data 
-    #     '''
-    #     print '('+self.test_add_user_missing_mandatory.__name__+')', self.test_add_user_missing_mandatory.__doc__
-    #     mandatory = ['nickname', 'age', 'country', 'gender']
-    #     #Iterate through all the attributes from the list, remove one of them in 
-    #     #each iteration. Be sure that always return status code 400
-    #     for attribute in mandatory:
-	   #      for i in [2]:
-	   #          user = copy.deepcopy(self.user)
-	   #          del user['template']['data'][i]
-	   #          print "*********************************************"
-	   #          print user
-	   #          resp = self.client.put(self.url2, data=json.dumps(user), headers={"Content-Type":"application/json"})
-	   #          self.assertEquals(resp.status_code, 400)
-      
-    # def test_add_existing_user(self):
-    #     '''
-    #     Testign that trying to add an existing user will fail
-
-    #     '''
-    #     print '('+self.test_add_existing_user.__name__+')', self.test_add_existing_user.__doc__
-    #     resp = self.client.put(self.url2, data=json.dumps(self.user), headers={"Content-Type":"application/json"})
-    #     self.assertEquals(resp.status_code, 409)
-
 class PlaylistTestCase (ResourcesAPITestCase):
    
     url = '/musicfinder/api/users/robi/playlists/Posted/'
     links_number = 3
     template_data_number = 3
-#     url_nickname = 'AxelW'
-#     url2 = '/forum/api/users/Mystery/history/'
-#     messages2_number = 2
-#     url3 = '/forum/api/users/AxelW/history/?length=1'
-#     messages3_number = 1
-
-#     url4 =  '/forum/api/users/AxelW/history/?after=1362317481'
-#     messages4_number = 1
-#     url5 =  '/forum/api/users/AxelW/history/?before=1362317481'
-#     messages5_number = 1
-#     url6 = '/forum/api/users/AxelW/history/?before=1362317481&after=1362217481'
-  
-
- 
-    
+   
     @classmethod
     def setUpClass(cls):
         print 'Testing PlaylistTestCase'
@@ -357,62 +300,6 @@ class PlaylistTestCase (ResourcesAPITestCase):
             template_data = data['template']['data']
             self.assertEquals(len(links),self.links_number)
             self.assertEquals(len(template_data),self.template_data_number)
-
-            
-    
-#     def test_get_history_timestamp_values(self):
-#         '''
-#         Checks that GET history return correct status code and format
-#         '''
-#         print '('+self.test_get_history_timestamp_values.__name__+')', self.test_get_history_timestamp_values.__doc__
-#         #I use this because I need the app context to use the api.url_for
-#         with resources.app.test_client() as client:
-#             resp = client.get(self.url4)
-#             self.assertEquals(resp.status_code,200)
-#             data = json.loads(resp.data)
-#             self.assertIn('messages',data)
-#             messages = data['messages']
-#             self.assertEquals(len(messages),self.messages4_number)
-
-#             resp = client.get(self.url5)
-#             self.assertEquals(resp.status_code,200)
-#             data = json.loads(resp.data)
-#             self.assertIn('messages',data)
-#             messages = data['messages']
-#             self.assertEquals(len(messages),self.messages5_number)
-
-#             resp = client.get(self.url6)
-#             self.assertEquals(resp.status_code,404)
-
-    
-#     def test_get_history(self):
-#         '''
-#         Checks that GET history return correct status code and number of values
-#         '''
-#         print '('+self.test_get_history.__name__+')', self.test_get_history.__doc__
-#         #I use this because I need the app context to use the api.url_for
-#         with resources.app.test_client() as client:
-#             resp = client.get(self.url)
-#             self.assertEquals(resp.status_code,200)
-#             data = json.loads(resp.data)
-#             link = data['links']
-#             self.assertEquals(link[0]['title'],'user')
-#             self.assertEquals(link[0]['rel'],'parent')
-#             self.assertEquals(link[0]['href'],resources.api.url_for(resources.User,nickname=self.url_nickname))
-#             self.assertEquals(link[1]['title'],'public profile')
-#             self.assertEquals(link[1]['rel'],'related')
-#             self.assertEquals(link[1]['href'],resources.api.url_for(resources.User_public,nickname=self.url_nickname))
-#             self.assertEquals(link[2]['title'],'users')
-#             self.assertEquals(link[2]['rel'],'collection')
-#             self.assertEquals(link[2]['href'],resources.api.url_for(resources.Users))
-#             messages = data['messages']
-            
-#             #Just check one message the rest are constructed in the same way
-#             message0 = messages [0]
-#             link0 = message0['link']
-#             self.assertIn('title',link0)
-#             self.assertIn('href',link0)
-#             self.assertIn('rel',link0)
 
 if __name__ == '__main__':
     print 'Start running tests'
