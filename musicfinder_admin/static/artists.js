@@ -42,12 +42,8 @@ function getArtists() {
 			//  [ { "name" : "nickname", "value" : "Mystery" },
 			//    { "name" : "registrationdate", "value" : "2014-10-12" } ]
 			var user_data = user.data;
-			for (var j=0; j<user_data.length;j++){
-				if (user_data[j].name=="name"){
-					appendArtistToList(user.href, user_data[j].value);
-				}			
-			} 
-		}
+			appendArtistToList(user.href, user_data);
+			}
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
@@ -68,6 +64,8 @@ function getSongs(apiurl) {
 		}
         $("#songs").empty();
 		var songs = data.collection.items;
+		if (songs.length == 0)
+		    alert("No songs by the selected artist");
 		for(i = 0; i<songs.length; i++){
             var song = songs[i].data;
 			appendSong(song);
@@ -122,6 +120,7 @@ function search() {
 		}
 		//Extract the users
     	artists = data.collection.items;
+
 		for (var i=0; i < artists.length; i++){
 			artist = artists[i];
 			artist_data = artist.data; 
@@ -140,23 +139,15 @@ function search() {
 				}			
 			}
 
-			if (!artistName) {
 
-			} else if ((artistInput && artistName.toLowerCase().indexOf(artistInput.toLowerCase())>-1) || !artistInput) {
-				if (!artistCountry) {
+            if ((!genreInput || (artistGenre && artistGenre.toLowerCase().indexOf(genreInput.toLowerCase())>-1))
+            && (!countryInput || (artistCountry && artistCountry.toLowerCase().indexOf(countryInput.toLowerCase())>-1))
+            && (!languageInput || (artistLanguage && artistLanguage.toLowerCase().indexOf(languageInput.toLowerCase())>-1))
+            && (!artistInput || (artistName && artistName.toLowerCase().indexOf(artistInput.toLowerCase())>-1))){
+                appendArtistToList(artist.href, artist_data);
+            }
 
-				} else if ((countryInput && artistCountry.toLowerCase().indexOf(countryInput.toLowerCase())>-1) || !countryInput) {
-					if (!artistLanguage) {
 
-					} else if ((languageInput && artistLanguage.toLowerCase().indexOf(languageInput.toLowerCase())>-1) || !languageInput) {
-						if (!artistGenre) {
-
-						} else if ((genreInput && artistGenre.toLowerCase().indexOf(genreInput.toLowerCase())>-1) || !genreInput) {
-							appendArtistToList(artist.href, artistName);
-						}
-					}
-				}
-			}
 		}
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
@@ -167,19 +158,27 @@ function search() {
 	});
 }
 
-function appendArtistToList(url, nickname) {
-	var $user = $('<tr>').html('<a class= "artist_link" href="'+url+'">'+nickname+'</a>');
+function appendArtistToList(url, data) {
+    var toappend = '<h4><a class= "artist_link" href="'+url+'">'+data[0].value+'</a></h4>';
+    if(data[1].value != null)
+        toappend += '<h5>Genre: ' +
+	data[1].value + '</h5>';
+	if(data[2].value != null)
+        toappend += '<h5>Country: ' +
+	data[2].value + '</h5>';
+	if(data[3].value != null)
+        toappend += '<h5>Language: ' +
+	data[3].value + '</h5>';
+	if(data[4].value != null)
+        toappend += '<h5>Active from: ' +
+	data[4].value + '</h5>';
+
+	var $user = $('<tr>').html(toappend);
 	//Add to the user list
 	$("#artists").append($user);
 	return $user;
 }
 
-function appendUserToList(url, nickname) {
-	var $user = $('<tr>').html('<a class= "artist_link" href="'+url+'">'+nickname+'</a>');
-	//Add to the user list
-	$("#users").append($user);
-	return $user;
-}
 
 function appendSong(song) {
 	var $user = $('<tr>').html('<td><p>'+ song[0]["value"]+'</p>' +

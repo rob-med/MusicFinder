@@ -31,7 +31,7 @@ function getPlaylists(nickname) {
 			var user_data = user.data;
 			for (var j=0; j<user_data.length;j++){
 				if (user_data[j].name=="name"){
-					appendUserToList(user.href, user_data[j].value);
+					appendPlaylistToList(user.href, user_data[j].value);
 				}
 			}
 		}
@@ -61,7 +61,7 @@ function handleGetUser(event) {
 function search() {
 	nickname = processForm(); // Get the user's nickname passed as parameter through the page neme (/playlists.html?nickname). It takes the name after the question mark.
 	playlistInput = $('#playlistInput').val();
-	var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/"+playlistInput+"/";
+	var apiurl = ENTRYPOINT + "users/"+nickname+"/playlists/";
 
 	return $.ajax({
 		url: apiurl,
@@ -72,10 +72,14 @@ function search() {
 		if (DEBUG) {
 			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
 		}
-    	playlist = data.name;
-    	href = data._links.collection.href;
-    	appendUserToList(href+playlist+"/", playlist);
-    	
+		var playlists = data.collection.items;
+		for(var i =0; i<playlists.length; i++){
+		    var pl_data= playlists[i].data;
+		    if(pl_data[0].value.toLowerCase().indexOf(playlistInput.toLowerCase()) > -1)
+                    	appendPlaylistToList(playlists[i].href, pl_data[0].value);
+
+		}
+
 
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
@@ -96,7 +100,7 @@ function handleGetsongs() {
 	return false;
 }
 
-function appendUserToList(url, nickname) {
+function appendPlaylistToList(url, nickname) {
 	var $user = $('<tr>').html('<a class= "playlist_link" href="'+url+'">'+nickname+'</a>');
 	//Add to the user list
 	$("#playlists").append($user);
