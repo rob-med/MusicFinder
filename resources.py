@@ -62,29 +62,29 @@ class Artists(Resource):
         collection['href'] = api.url_for(Artists)
         collection['template'] = {
         "data" : [
-            {"prompt" : "", "name" : "name", "value" : "", "required":True},
-            {"prompt" : "", "name" : "country", "value" : "", "required":False},
+            {"prompt" : "", "name" : "legalName", "value" : "", "required":True},
+            {"prompt" : "", "name" : "foundingLocation", "value" : "", "required":False},
             {"prompt" : "", "name" : "genre", "value" : "", "required":False},
             {"prompt" : "", "name" : "language", "value" : "", "required":False},
-            {"prompt" : "", "name" : "formed_in", "value" : "", "required":False}
+            {"prompt" : "", "name" : "foundingDate", "value" : "", "required":False}
 
         ]
         }
         #Create the items
         items = []
         for a in artist_db:
-            _name = a['name']
-            _country = a['country']
+            _name = a['legalName']
+            _country = a['foundingLocation']
             _genre = a['genre']
             _language = a['language']
-            _formed_in = a['formed_in']
+            _formed_in = a['foundingDate']
             _url = api.url_for(Artist, artist=_name)
             artist = {}
             artist['href'] = _url
             artist['data'] = []
 
-            ss = [('name',_name), ('genre', _genre), ('country',_country), ('language',_language),
-                ('formed_in', _formed_in)]
+            ss = [('legalName',_name), ('genre', _genre), ('foundingLocation',_country), ('language',_language),
+                ('foundingDate', _formed_in)]
             for s in ss:
                 value = {'name': s[0], 'value': s[1]}
                 artist['data'].append(value)
@@ -107,7 +107,7 @@ class Artists(Resource):
                 tt = d['name']
                 dictionary[tt] = d['value']
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not dictionary['name'] or not dictionary['genre']:
+            if not dictionary['legalName'] or not dictionary['genre']:
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include artist's name and genre",
                                              "Artists")
@@ -116,10 +116,10 @@ class Artists(Resource):
                                          "Be sure you include artist's name and genre",
                                          "Artists")
 
-        aid = g.db.create_artist(dictionary['name'], dictionary['genre'], dictionary.get('country', None), dictionary.get('language', None), dictionary.get('formed_in', None))
+        aid = g.db.create_artist(dictionary['legalName'], dictionary['genre'], dictionary.get('foundingLocation', None), dictionary.get('language', None), dictionary.get('foundingDate', None))
         if not aid:
             abort(500)
-        url = api.url_for(Artist, artist=dictionary['name'])
+        url = api.url_for(Artist, artist=dictionary['legalName'])
 
         #RENDER
         #Return the response
@@ -167,21 +167,21 @@ class Artist(Resource):
         #Fill the template
         envelope['template'] = {
         "data" : [
-            {"prompt" : "", "name" : "name", "value" : "", "required":True},
+            {"prompt" : "", "name" : "legalName", "value" : "", "required":True},
             {"prompt" : "", "name" : "genre", "value" : "", "required":False},
-            {"prompt" : "", "name" : "country", "value" : "", "required":False},
+            {"prompt" : "", "name" : "foundingLocation", "value" : "", "required":False},
             {"prompt" : "", "name" : "language", "value" : "", "required":False},
-            {"prompt" : "", "name" : "formed_in", "value" : "", "required":False},
+            {"prompt" : "", "name" : "foundingDate", "value" : "", "required":False},
 
             ]
         }
 
         #Fill the rest of properties
-        envelope['name'] = artist_db['name']
+        envelope['legalName'] = artist_db['legalName']
         envelope['genre'] = artist_db['genre']
-        envelope['country'] = artist_db['country']
+        envelope['foundingLocation'] = artist_db['foundingLocation']
         envelope['language'] = artist_db['language']
-        envelope['formed_in'] = artist_db['formed_in']
+        envelope['foundingDate'] = artist_db['foundingDate']
 
         #RENDER
         return Response (json.dumps(envelope), 200, mimetype=HAL+";"+ ARTIST_PROFILE)
@@ -198,24 +198,24 @@ class Songs(Resource):
         collection['href'] = api.url_for(Songs, artist=artist)
         collection['template'] = {
         "data" : [
-            {"prompt" : "", "name" : "title", "value" : "", "required":True},
-            {"prompt" : "", "name" : "artist", "value" : "", "required":True},
-            {"prompt" : "", "name" : "length", "value" : "", "required":False},
-            {"prompt" : "", "name" : "year", "value" : "", "required":False},
+            {"prompt" : "", "name" : "name", "value" : "", "required":True},
+            {"prompt" : "", "name" : "byArtist", "value" : "", "required":True},
+            {"prompt" : "", "name" : "duration", "value" : "", "required":False},
+            {"prompt" : "", "name" : "datePublished", "value" : "", "required":False},
 
             ]
         }
         #Create the items
         items = []
         for a in songs_db:
-            _title = a['title']
-            _length = a['length']
-            _year = a['year']
+            _title = a['name']
+            _length = a['duration']
+            _year = a['datePublished']
             _url = api.url_for(Song, artist=artist, title=_title)
             song = {}
             song['href'] = _url
             song['data'] = []
-            ss = [('title',_title), ('artist', artist), ('length',_length), ('year',_year)]
+            ss = [('name',_title), ('byArtist', artist), ('duration',_length), ('datePublished',_year)]
             for s in ss:
                 value = {'name': s[0], 'value': s[1]}
                 song['data'].append(value)
@@ -244,7 +244,7 @@ class Songs(Resource):
                 dictionary[tt] = d['value']
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not dictionary.get('title', None):
+            if not dictionary.get('name', None):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include song's title",
                                              "Songs")
@@ -256,7 +256,7 @@ class Songs(Resource):
                                          "Artists")
 
 
-        aid = g.db.create_song(dictionary.get('title'), dictionary.get('year', None), dictionary.get('length', None), artist)
+        aid = g.db.create_song(dictionary.get('name'), dictionary.get('datePublished', None), dictionary.get('duration', None), artist)
         if not aid:
             abort(500)
 
@@ -315,21 +315,21 @@ class Song(Resource):
         #Fill the template
         envelope['template'] = {
         "data" : [
-            {"prompt" : "", "name" : "title", "value" : "", "required":True},
-            {"prompt" : "", "name" : "artist", "value" : "", "required":False},
-            {"prompt" : "", "name" : "year", "value" : "", "required":False},
-            {"prompt" : "", "name" : "length", "value" : "", "required":False},
+            {"prompt" : "", "name" : "name", "value" : "", "required":True},
+            {"prompt" : "", "name" : "byArtist", "value" : "", "required":False},
+            {"prompt" : "", "name" : "datePublished", "value" : "", "required":False},
+            {"prompt" : "", "name" : "duration", "value" : "", "required":False},
             {"prompt" : "", "name" : "sid", "value" : "", "required":False},
 
             ]
         }
 
         #Fill the rest of properties
-        envelope['title'] = song_db['title']
-        envelope['artist'] = song_db['artist']
-        envelope['year'] = song_db['year']
-        envelope['length'] = song_db['length']
-        envelope['sid'] = song_db['songid']
+        envelope['name'] = song_db['name']
+        envelope['byArtist'] = song_db['byArtist']
+        envelope['datePublished'] = song_db['datePublished']
+        envelope['duration'] = song_db['duration']
+        envelope['sid'] = song_db['sid']
 
 
         #RENDER
@@ -383,14 +383,14 @@ class Playlist(Resource):
         envelope['template'] = {
         "data" : [
             {"prompt" : "", "name" : "name", "value" : "", "required":True},
-            {"prompt" : "", "name" : "user", "value" : "", "required":True},
+            {"prompt" : "", "name" : "author", "value" : "", "required":True},
             {"prompt" : "", "name" : "created_on", "value" : "", "required":False}
         ]
         }
 
         #Fill the rest of properties
         envelope['name'] = pl_db['name']
-        envelope['user'] = pl_db['user']
+        envelope['author'] = pl_db['author']
         envelope['created_on'] = pl_db['created_on']
 
         #RENDER
@@ -414,7 +414,7 @@ class Playlist(Resource):
 
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not dictionary.get("artist", "None") or not dictionary.get('title',"None"):
+            if not dictionary.get("byArtist", "None") or not dictionary.get('name',"None"):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include song's title and artist",
                                              "Playlist")
@@ -424,7 +424,7 @@ class Playlist(Resource):
             return create_error_response(400, "Wrong request format",
                                          "Be sure you include song's title and artist",
                                          "Playlist")
-        song = g.db.get_song(dictionary.get("artist"),dictionary.get("title"))
+        song = g.db.get_song(dictionary.get("byArtist"),dictionary.get("name"))
         if not song:
             abort(500)
 
@@ -477,12 +477,12 @@ class Playlist(Resource):
 
 
             #CHECK THAT DATA RECEIVED IS CORRECT
-            if not dictionary.get("name", None) or not dictionary.get("user", None):
+            if not dictionary.get("name", None) or not dictionary.get("author", None):
                 abort(400)
         except:
             abort(400)
         else:
-            if not g.db.modify_playlist(nickname, title, dictionary.get("user"), dictionary.get("title"), dictionary.get("created_on")):
+            if not g.db.modify_playlist(nickname, title, dictionary.get("author"), dictionary.get("name"), dictionary.get("created_on")):
                 return NotFound()
             return '', 204
 
@@ -499,26 +499,26 @@ class Playlist_songs(Resource):
         collection['href'] = api.url_for(Playlist_songs, nickname=nickname, title=title)
         collection['template'] = {
         "data" : [
-            {"prompt" : "", "name" : "title", "value" : "", "required":True},
-            {"prompt" : "", "name" : "artist", "value" : "", "required":True},
-            {"prompt" : "", "name" : "length", "value" : "", "required":False},
-            {"prompt" : "", "name" : "year", "value" : "", "required":False},
+            {"prompt" : "", "name" : "name", "value" : "", "required":True},
+            {"prompt" : "", "name" : "byArtist", "value" : "", "required":True},
+            {"prompt" : "", "name" : "duration", "value" : "", "required":False},
+            {"prompt" : "", "name" : "datePublished", "value" : "", "required":False},
 
             ]
         }
         #Create the items
         items = []
         for a in songs:
-            _artist = a['artist']
-            _title = a['title']
-            _length = a['length']
-            _year = a['year']
-            _url = api.url_for(Song, artist=a['artist'], title=_title)
+            _artist = a['byArtist']
+            _title = a['name']
+            _length = a['duration']
+            _year = a['datePublished']
+            _url = api.url_for(Song, artist=a['byArtist'], title=_title)
             song = {}
             song['href'] = _url
             song['data'] = []
 
-            ss = [('title',_title), ('artist', _artist), ('length',_length), ('year',_year)]
+            ss = [('name',_title), ('byArtist', _artist), ('duration',_length), ('datePublished',_year)]
             for s in ss:
                 value = {'name': s[0], 'value': s[1]}
                 song['data'].append(value)
@@ -553,7 +553,7 @@ class Users(Resource):
              "object" : {}, "required":False},
             {"prompt" : "Insert user gender", "name" : "gender",
              "value" : "", "required":False},
-            {"prompt" : "Insert user country", "name" : "country",
+            {"prompt" : "Insert user country", "name" : "nationality",
              "value" : "", "required":False},
             {"prompt" : "Insert user age", "name" : "age",
              "value" : "", "required":False}
@@ -566,7 +566,7 @@ class Users(Resource):
             print user
             _nickname = user['nickname']
             _gender = user['gender']
-            _country = user['country']
+            _country = user['nationality']
             _age = user['age']
 
             _url = api.url_for(User, nickname=_nickname)
@@ -576,7 +576,7 @@ class Users(Resource):
             user['read-only'] = True
             user['data'] = []
 
-            ss = [('nickname',_nickname), ('gender', _gender), ('country',_country), ('age',_age)]
+            ss = [('nickname',_nickname), ('gender', _gender), ('nationality',_country), ('age',_age)]
             for s in ss:
                 value = {'name': s[0], 'value': s[1]}
                 user['data'].append(value)
@@ -619,7 +619,7 @@ class Users(Resource):
                                          "users")
 
         #aid = g.db.create_user(nickname, password, age=None, country=None, gender=None)
-        aid = g.db.create_user(dictionary.get("nickname"), dictionary.get("password"), dictionary.get("age", None), dictionary.get("country", None), dictionary.get("gender", None))
+        aid = g.db.create_user(dictionary.get("nickname"), dictionary.get("password"), dictionary.get("age", None), dictionary.get("nationality", None), dictionary.get("gender", None))
         if not aid:
             abort(500)
 
@@ -675,7 +675,7 @@ class User(Resource):
         "data" : [
             {"prompt" : "", "name" : "nickname", "value" : "", "required":True},
             {"prompt" : "", "name" : "gender", "value" : "", "required":False},
-            {"prompt" : "", "name" : "country", "value" : "", "required":False},
+            {"prompt" : "", "name" : "nationality", "value" : "", "required":False},
             {"prompt" : "", "name" : "age", "value" : "", "required":False}
         ]
         }
@@ -683,7 +683,7 @@ class User(Resource):
         #Fill the rest of properties
         envelope['nickname'] = user_db['nickname']
         envelope['gender'] = user_db['gender']
-        envelope['country'] = user_db['country']
+        envelope['nationality'] = user_db['nationality']
         envelope['age'] = user_db['age']
 
         #RENDER
@@ -719,7 +719,7 @@ class User(Resource):
         except:
             abort(400)
         else:
-            if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary.get("country", None), dictionary.get("gender", None)):
+            if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary.get("nationality", None), dictionary.get("gender", None)):
                 return NotFound()
             return '', 204
 
@@ -736,7 +736,7 @@ class User_playlists(Resource):
         collection['template'] = {
         "data" : [
             {"prompt" : "", "name" : "name", "value" : "", "required":True},
-            {"prompt" : "", "name" : "user", "value" : "", "required":True},
+            {"prompt" : "", "name" : "author", "value" : "", "required":True},
             {"prompt" : "", "name" : "created_on", "value" : "", "required":False}
         ]
         }
@@ -744,14 +744,14 @@ class User_playlists(Resource):
         items = []
         for a in pl_db:
             _title = a['name']
-            _user = a['user']
+            _user = a['author']
             _created_on = a['created_on']
             _url = api.url_for(Playlist, nickname=_user, title=_title)
             pl = {}
             pl['href'] = _url
             pl['data'] = []
 
-            ss = [('name',_title), ('user', _user), ('created_on',_created_on)]
+            ss = [('name',_title), ('author', _user), ('created_on',_created_on)]
             for s in ss:
                 value = {'name': s[0], 'value': s[1]}
                 pl['data'].append(value)

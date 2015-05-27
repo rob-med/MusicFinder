@@ -4,16 +4,16 @@ from .database_api_tests_common import BaseTestCase, db, db_path
 
 class SongsDbAPITestCase(BaseTestCase):
 
-    song1 = {'title': 'I know',
-               'artist': 'Placebo',
-                'year': 1996,
-                'length': "3:41",
+    song1 = {'name': 'I know',
+               'byArtist': 'Placebo',
+                'datePublished': 1996,
+                'duration': "3:41",
                 'sid': 1
                 }
-    song2 = {'title': 'Zombie',
-               'artist': 'Cranberries',
-                'year': 1994,
-                'length': "5:21",
+    song2 = {'name': 'Zombie',
+               'byArtist': 'Cranberries',
+                'datePublished': 1994,
+                'duration': "5:21",
                 'sid': 6
                 }
     initial_size = 20
@@ -57,7 +57,7 @@ class SongsDbAPITestCase(BaseTestCase):
                self.test_create_song_object.__doc__
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM songs WHERE title = "Zombie"'
+        query = 'SELECT * FROM songs WHERE name = "Zombie"'
         #Connects to the database.
         con = sqlite3.connect(db_path)
         with con:
@@ -106,7 +106,7 @@ class SongsDbAPITestCase(BaseTestCase):
         #Iterate throug artists and check if the artists with artist1_id and
         #artist2_id are correct:
         for song in songs:
-            if song['title'] == self.song1['title']:
+            if song['name'] == self.song1['name']:
                 self.assertDictContainsSubset(song, self.song1)
 
 
@@ -120,10 +120,10 @@ class SongsDbAPITestCase(BaseTestCase):
         self.assertIsNotNone(song)
         #Get the expected modified artist
         new_song = {}
-        new_song['title'] = 'Society'
-        new_song['artist'] = 'Eddie Vedder'
-        new_song['year'] = 2007
-        new_song['length'] = '3:56'
+        new_song['name'] = 'Society'
+        new_song['byArtist'] = 'Eddie Vedder'
+        new_song['datePublished'] = 2007
+        new_song['duration'] = '3:56'
         #Check that the artists has been really modified through a get
         resp2 = db.get_song('Eddie Vedder', 'Society')
         self.assertDictContainsSubset(new_song, resp2)

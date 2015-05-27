@@ -168,7 +168,7 @@ function handleCreateUser() {
     }
     if ($("#newCountry").val()) {
     	var data = {};
-    	data.name = "country";
+    	data.name = "nationality";
     	data.value = $("#newCountry").val();
     	envelope.template.data.push(data);
 

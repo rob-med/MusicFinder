@@ -1,11 +1,11 @@
 DROP TABLE IF EXISTS "artists";
 CREATE TABLE "artists" (
-	`name`	TEXT,
-	`country`	TEXT,
+	`legalName`	TEXT,
+	`foundingLocation`	TEXT,
 	`language`	TEXT,
 	`genre`	TEXT,
-	`formed_in`	INTEGER,
-	PRIMARY KEY(name)
+	`foundingDate`	INTEGER,
+	PRIMARY KEY(legalName)
 );
 INSERT INTO "artists" VALUES('Placebo','England','English','Alternative Rock',1996);
 INSERT INTO "artists" VALUES('Editors','England','English','Indie Rock',2004);
@@ -28,21 +28,13 @@ INSERT INTO "artists" VALUES('Sanni','Finland','Finnish','Pop',NULL);
 INSERT INTO "artists" VALUES('Radiohead','England','English','Alternative Rock',1992);
 INSERT INTO "artists" VALUES('Dream Theater','USA','English','Heavy Metal',1985);
 
-DROP TABLE IF EXISTS "favorites";
-CREATE TABLE `favorites` (
-	`song`	INTEGER,
-	`user`	TEXT,
-	PRIMARY KEY(song,user),
-	FOREIGN KEY (song) REFERENCES songs(sid),
-	FOREIGN KEY (user) REFERENCES users(nickname)
-);
 DROP TABLE IF EXISTS "playlists";
 CREATE TABLE "playlists" (
 	`name`	TEXT,
-	`user`	TEXT,
+	`author`	TEXT,
 	`created_on`	INTEGER,
-	PRIMARY KEY(name,user),
-	FOREIGN KEY(`user`) REFERENCES users ( nickname )
+	PRIMARY KEY(name,author),
+	FOREIGN KEY(`author`) REFERENCES users ( nickname )
 );
 INSERT INTO "playlists" VALUES('Posted','robi',1427901320);
 DROP TABLE IF EXISTS "song_in_playlist";
@@ -58,13 +50,13 @@ INSERT INTO "song_in_playlist" VALUES(1,'Prima','robi',1426608888);
 INSERT INTO "song_in_playlist" VALUES(2,'Posted','robi',1430155183);
 DROP TABLE IF EXISTS "songs";
 CREATE TABLE `songs` (
-	`title`	TEXT,
-	`artist`	TEXT,
-	`year`	INTEGER,
-	`length`	INTEGER NOT NULL,
+	`name`	TEXT,
+	`byArtist`	TEXT,
+	`datePublished`	INTEGER,
+	`duration`	INTEGER NOT NULL,
 	`sid`	INTEGER,
 	PRIMARY KEY(sid),
-	FOREIGN KEY (artist) REFERENCES artists(name)
+	FOREIGN KEY (byArtist) REFERENCES artists(legalName)
 );
 INSERT INTO "songs" VALUES('I know','Placebo',1996,'3:41',1);
 INSERT INTO "songs" VALUES('Pierrot the clown','Placebo',NULL,'4:23',2);
@@ -92,7 +84,7 @@ CREATE TABLE "users" (
 	`nickname`	TEXT,
 	`password`	TEXT NOT NULL,
 	`age`	INTEGER,
-	`country`	TEXT,
+	`nationality`	TEXT,
 	`gender`	TEXT,
 	PRIMARY KEY(nickname)
 );

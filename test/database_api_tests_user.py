@@ -9,7 +9,7 @@ class UserDbAPITestCase(BaseTestCase):
             "nickname": user1_nickname,
             "password": "pass",
             "age": 18,
-            "country": "Italy",
+            "nationality": "Italy",
             "gender": "Male"
     }
     user2_nickname = 'Joshua'
@@ -17,7 +17,7 @@ class UserDbAPITestCase(BaseTestCase):
             "nickname": user2_nickname,
             "password": "oerae",
             "age": 34,
-            "country": "Austalia",
+            "nationality": "Austalia",
             "gender": "Male"
     }
     new_user = {
@@ -161,7 +161,7 @@ class UserDbAPITestCase(BaseTestCase):
         resp2 = db.get_user(self.user1_nickname)
         self.assertEquals(resp2['age'],
                           78)
-        self.assertEquals(resp2['country'], "Poland")
+        self.assertEquals(resp2['nationality'], "Poland")
         self.assertEquals(resp2['gender'], "Male")
 
 

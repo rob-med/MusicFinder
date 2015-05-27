@@ -4,18 +4,18 @@ from .database_api_tests_common import BaseTestCase, db, db_path
 
 class ArtistsDbAPITestCase(BaseTestCase):
 
-    artist1 = {'name': 'Placebo',
+    artist1 = {'legalName': 'Placebo',
                'genre': 'Alternative Rock',
-                'country': "England",
+                'foundingLocation': "England",
                 'language': "English",
-                'formed_in': 1996
+                'foundingDate': 1996
                 }
     artist2 = {
-            'name': 'Editors',
+            'legalName': 'Editors',
                            'genre': 'Indie Rock',
-                'country': "England",
+                'foundingLocation': "England",
                 'language': "English",
-                'formed_in': 2004
+                'foundingDate': 2004
 
     }
     initial_size = 20
@@ -59,7 +59,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
                self.test_create_artist_object.__doc__
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM artists WHERE name = "Placebo"'
+        query = 'SELECT * FROM artists WHERE legalName = "Placebo"'
         #Connects to the database.
         con = sqlite3.connect(db_path)
         with con:
@@ -83,7 +83,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
         print '('+self.test_get_artist.__name__+')', \
               self.test_get_artist.__doc__
         #Test with an existing artist
-        a = db.get_artist(self.artist1['name'])
+        a = db.get_artist(self.artist1['legalName'])
         self.assertDictContainsSubset(a, self.artist1)
 
 
@@ -107,7 +107,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
         self.assertEquals(len(artists), self.initial_size)
         #Iterate through artists and check if the artists with artist1_id are correct:
         for artist in artists:
-            if artist['name'] == self.artist1['name']:
+            if artist['legalName'] == self.artist1['legalName']:
                 self.assertDictContainsSubset(artist, self.artist1)
 
     def test_get_artists_specific_genre(self):
@@ -121,8 +121,8 @@ class ArtistsDbAPITestCase(BaseTestCase):
         self.assertEquals(len(artists), 3)
         #artists id are 13 and 14
         for artist in artists:
-            self.assertIn(artist['name'], ('Cranberries', 'Muse', 'Mana'))
-            self.assertNotIn(artist['name'], ('Clap! Clap!'))
+            self.assertIn(artist['legalName'], ('Cranberries', 'Muse', 'Mana'))
+            self.assertNotIn(artist['legalName'], ('Clap! Clap!'))
 
     def test_create_artist(self):
         '''
@@ -134,11 +134,11 @@ class ArtistsDbAPITestCase(BaseTestCase):
         self.assertIsNotNone(artistid)
         #Get the expected modified artist
         new_artist = {}
-        new_artist['name'] = 'Editors'
+        new_artist['legalName'] = 'Editors'
         new_artist['genre'] = 'Indie Rock'
-        new_artist['country'] = 'England'
+        new_artist['foundingLocation'] = 'England'
         new_artist['language'] = 'English'
-        new_artist['formed_in'] = 2004
+        new_artist['foundingDate'] = 2004
 
 
         #Check that the artists has been really modified through a get

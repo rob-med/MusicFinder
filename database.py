@@ -130,35 +130,35 @@ class MusicDatabase(object):
     #Here the helpers that transform database rows into dictionary.
     def _create_song_object(self, row):
 
-        song_artist = row['artist']
-        song_title = row['title']
-        song_year = row['year']
-        song_length = row['length']
+        song_artist = row['byArtist']
+        song_title = row['name']
+        song_year = row['datePublished']
+        song_length = row['duration']
         song_id = row['sid']
-        song = {'sid':song_id, 'title': song_title,
-                   'artist':song_artist, 'year':song_year,
-                   'length':song_length}
+        song = {'sid':song_id, 'name': song_title,
+                   'byArtist':song_artist, 'datePublished':song_year,
+                   'duration':song_length}
         return song
 
     def _create_artist_object(self, row):
 
-        artist_name = row['name']
+        artist_name = row['legalName']
         artist_genre = row['genre']
-        artist_country= row['country']
+        artist_country= row['foundingLocation']
         artist_language= row['language']
-        artist_formed_in = row['formed_in']
-        artist = {'name':artist_name, 'genre': artist_genre,
-                   'country': artist_country, 'language': artist_language,
-                   'formed_in': artist_formed_in}
+        artist_formed_in = row['foundingDate']
+        artist = {'legalName':artist_name, 'genre': artist_genre,
+                   'foundingLocation': artist_country, 'language': artist_language,
+                   'foundingDate': artist_formed_in}
         return artist
 
     def _create_playlist_object(self, row):
 
         pl_name = row['name']
-        pl_user = row['user']
+        pl_user = row['author']
         pl_created = row['created_on']
 
-        pl = {'name':pl_name, 'user': pl_user,
+        pl = {'name':pl_name, 'author': pl_user,
                    'created_on': pl_created}
         return pl
     def _create_user_object(self, row):
@@ -166,17 +166,17 @@ class MusicDatabase(object):
         name = row['nickname']
         gender = row['gender']
         age = row['age']
-        country = row['country']
+        country = row['nationality']
         password = row['password']
         user = {'nickname':name, 'password':password, 'gender': gender,
-                   'age': age, 'country':country}
+                   'age': age, 'nationality':country}
         return user
 
     def get_song(self, artist, title):
 
         #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM songs WHERE artist = ? and title = ?'
+        query = 'SELECT * FROM songs WHERE byArtist = ? and name = ?'
         con = sqlite3.connect(self.db_path)
         with con:
             con.row_factory = sqlite3.Row
@@ -218,7 +218,7 @@ class MusicDatabase(object):
         keys_on = 'PRAGMA foreign_keys = ON'
         query = 'SELECT * FROM songs'
         if artist is  not None:
-            query += ' where artist = ?'
+            query += ' where byArtist = ?'
         con = sqlite3.connect(self.db_path)
         with con:
             con.row_factory = sqlite3.Row
@@ -242,7 +242,7 @@ class MusicDatabase(object):
 
     def get_playlist(self, name, user):
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM playlists where user = ? and name = ?'
+        query = 'SELECT * FROM playlists where author = ? and name = ?'
         con = sqlite3.connect(self.db_path)
         with con:
             con.row_factory = sqlite3.Row
@@ -259,7 +259,7 @@ class MusicDatabase(object):
     def get_playlists(self, user):
         #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT name, user, created_on FROM playlists where user = ?'
+        query = 'SELECT name, author, created_on FROM playlists where author = ?'
         #Connects to the database. Gets a connection object
         con = sqlite3.connect(self.db_path)
         with con:
@@ -286,7 +286,7 @@ class MusicDatabase(object):
     def get_songs_in_playlist(self, pl_name, pl_user):
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT sid, title, year, length, artist FROM song_in_playlist, songs where pl_name = ? and pl_user = ? and song = sid'
+        query = 'SELECT sid, name, datePublished, duration, byArtist FROM song_in_playlist, songs where pl_name = ? and pl_user = ? and song = sid'
         #Connects to the database.
         con = sqlite3.connect(self.db_path)
         with con:
@@ -312,7 +312,7 @@ class MusicDatabase(object):
 
     def create_artist(self, name, genre, country, language, formed_in):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'INSERT INTO artists (name,genre,country,language,formed_in) VALUES(?,?,?,?,?)'
+        stmnt = 'INSERT INTO artists (legalName,genre,foundingLocation,language,foundingDate) VALUES(?,?,?,?,?)'
         con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
@@ -331,7 +331,7 @@ class MusicDatabase(object):
 
     def create_song(self, title, year, length, artist):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'INSERT INTO songs (title,year,length,artist) VALUES(?,?,?,?)'
+        stmnt = 'INSERT INTO songs (name,datePublished,duration,byArtist) VALUES(?,?,?,?)'
         con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
@@ -350,7 +350,7 @@ class MusicDatabase(object):
 
     def create_user(self, nickname, password, age, country, gender):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'INSERT INTO users (nickname,password,age,country,gender) VALUES(?,?,?,?,?)'
+        stmnt = 'INSERT INTO users (nickname,password,age,nationality,gender) VALUES(?,?,?,?,?)'
         con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
@@ -399,7 +399,7 @@ class MusicDatabase(object):
 
     def create_playlist(self, name, user):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'INSERT INTO playlists (name, user, created_on) VALUES(?,?,?)'
+        stmnt = 'INSERT INTO playlists (name, author, created_on) VALUES(?,?,?)'
         con = sqlite3.connect(self.db_path)
         with con:
             #Cursor and row initialization
@@ -441,7 +441,7 @@ class MusicDatabase(object):
     def get_artist(self, name):
         #Create the SQL Query
         keys_on = 'PRAGMA foreign_keys = ON'
-        query = 'SELECT * FROM artists WHERE name = ?'
+        query = 'SELECT * FROM artists WHERE legalName = ?'
         #Connects to the database. Gets a connection object
         con = sqlite3.connect(self.db_path)
         with con:
@@ -529,7 +529,7 @@ class MusicDatabase(object):
 
     def delete_playlist(self, user, title):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'DELETE FROM playlists WHERE user = ? and name = ?'
+        stmnt = 'DELETE FROM playlists WHERE author = ? and name = ?'
         #connects  to the database.
         con = sqlite3.connect(self.db_path)
         with con:
@@ -573,8 +573,8 @@ class MusicDatabase(object):
 
     def modify_playlist(self, user, title, new_user, new_title, created_on):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'UPDATE playlists SET name = ? , user = ?, created_on = ?\
-                 WHERE user = ? and name = ?'
+        stmnt = 'UPDATE playlists SET name = ? , author = ?, created_on = ?\
+                 WHERE user = ? and author = ?'
         #Connects  to the database.
         con = sqlite3.connect(self.db_path)
         with con:
@@ -592,7 +592,7 @@ class MusicDatabase(object):
 
     def modify_user(self, old_nickname, age, country, gender):
         keys_on = 'PRAGMA foreign_keys = ON'
-        stmnt = 'UPDATE users SET age = ?, country = ?, gender = ? \
+        stmnt = 'UPDATE users SET age = ?, nationality = ?, gender = ? \
                  WHERE nickname = ?'
         #Connects  to the database.
         con = sqlite3.connect(self.db_path)
@@ -613,7 +613,7 @@ class MusicDatabase(object):
 
         keys_on = 'PRAGMA foreign_keys = ON'
 
-        query = 'DELETE FROM songs WHERE artist = ? and title = ?'
+        query = 'DELETE FROM songs WHERE byArtist = ? and name = ?'
 
         con = sqlite3.connect(self.db_path)
         with con:

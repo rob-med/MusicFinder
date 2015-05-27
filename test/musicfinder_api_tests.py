@@ -52,11 +52,11 @@ class ArtistsTestCase (ResourcesAPITestCase):
             template = data['collection']['template']
             template_data = template['data']
             # link = data['links']
-            self.assertEquals(template_data[0]['name'],'name')
-            self.assertEquals(template_data[1]['name'],'country')
+            self.assertEquals(template_data[0]['name'],'legalName')
+            self.assertEquals(template_data[1]['name'],'foundingLocation')
             self.assertEquals(template_data[2]['name'],'genre')
             self.assertEquals(template_data[3]['name'],'language')
-            self.assertEquals(template_data[4]['name'],'formed_in')
+            self.assertEquals(template_data[4]['name'],'foundingDate')
             # self.assertEquals(link[0]['rel'],'related')
             # self.assertEquals(link[0]['href'],resources.api.url_for(resources.Users))
             artists = data['collection']['items']
@@ -122,8 +122,8 @@ class ArtistTestCase (ResourcesAPITestCase):
     artist2 = 'Elio'
     url1 = '/musicfinder/api/artists/%s/'% artist1
     url2 = '/musicfinder/api/artists/'
-    artist = {"template":{"data":[{"name":"name","value":"Elio"},{"name":"country","value":"England"},{"name":"language","value":"english"},{"name":"genre","value":"rock"},
-                {"name":"formed_in","value":1996}]}}
+    artist = {"template":{"data":[{"name":"legalName","value":"Elio"},{"name":"foundingLocation","value":"England"},{"name":"language","value":"english"},{"name":"genre","value":"rock"},
+                {"name":"foundingDate","value":1996}]}}
     artist_1_request_wrong = {"template":{"data":[{"name":"language","value":"english"},{"name":"genre","value":"rock"}]}}
  
     @classmethod
@@ -162,7 +162,7 @@ class ArtistTestCase (ResourcesAPITestCase):
             links = data['_links']
             #Check that the link format is correct
             self.assertEquals(len(links), 3)
-            for attribute in ('name', 'language', 'country', 'genre'):
+            for attribute in ('legalName', 'language', 'foundingLocation', 'genre'):
                 self.assertIn(attribute, data)
 
     def test_add_artist(self):
@@ -209,7 +209,7 @@ class UserTestCase (ResourcesAPITestCase):
     def setUp(self):
         super(UserTestCase,self).setUp()
         self.url = '/musicfinder/api/users/'
-        self.user = {"template":{"data":[{"name":"nickname","value":"Clayton"},{"name":"password","value":"frank"},{"name":"age","value":30},{"name":"country","value":"England"},
+        self.user = {"template":{"data":[{"name":"nickname","value":"Clayton"},{"name":"password","value":"frank"},{"name":"age","value":30},{"name":"nationality","value":"England"},
                 {"name":"gender","value":"Male"}]}}
 
     def test_url(self):
@@ -241,7 +241,7 @@ class UserTestCase (ResourcesAPITestCase):
         data = json.loads(resp.data)
         self.assertIn('_links', data)
         self.assertIn('nickname', data)
-        self.assertIn('country', data)
+        self.assertIn('nationality', data)
         self.assertIn('gender', data)
         self.assertIn('age', data)
         #Check that user has public_profile, restricted_profile, history
@@ -295,7 +295,7 @@ class PlaylistTestCase (ResourcesAPITestCase):
             self.assertIn('_links',data)
             self.assertIn('name',data)
             self.assertIn('template',data)
-            self.assertIn('user',data)
+            self.assertIn('author',data)
             links = data['_links']
             template_data = data['template']['data']
             self.assertEquals(len(links),self.links_number)

@@ -88,8 +88,11 @@ function handleGetArtist(event) {
 	}
 	event.preventDefault();
 
+	$(".selected .details").addClass("hideDetails");
 	$(".selected").removeClass("selected");
-    $(this).parent().addClass("selected");
+
+    $(this).parent().parent().addClass("selected");
+	$(".selected .details").removeClass("hideDetails");
     var href = $(this).attr("href");
     getSongs(href);
 
@@ -132,7 +135,7 @@ function search() {
 				if (artist_data[j].name=="genre"){
 					artistGenre = artist_data[j].value;     // Get the genre of the artist in the form
 				}
-				if (artist_data[j].name=="country"){
+				if (artist_data[j].name=="nationality"){
 					artistCountry = artist_data[j].value;   // Get the country of the artist in the form
 				}
 				if (artist_data[j].name=="language"){
@@ -160,7 +163,7 @@ function search() {
 }
 
 function appendArtistToList(url, data) {
-    var toappend = '<h4><a class= "artist_link" href="'+url+'">'+data[0].value+'</a></h4>';
+    var toappend = '<h4><a class= "artist_link" href="'+url+'">'+data[0].value+'</a></h4><div class="details hideDetails">';
     if(data[1].value != null)
         toappend += '<h5>Genre: ' +
 	data[1].value + '</h5>';
@@ -176,7 +179,9 @@ function appendArtistToList(url, data) {
 
     return $.ajax({
 		url: ECHONEST_API + data[0].value,
+		jsonp: true,
 		dataType:DEFAULT_DATATYPE,
+		crossDomain: true,
 		//headers: {"Authorization":"admin"}
 	}).done(function (data, textStatus, jqXHR){
 		if (DEBUG) {
@@ -204,20 +209,21 @@ function appendArtistToList(url, data) {
                         '<div class="bar"></div>' +
                         '<div class="fill"></div>'+
                     '</div></div>';
-	    var $user = $('<tr>').html(toappend);
-	    //Add to the user list
-	    $("#artists").append($user);
-	    return $user;
+
 
 
 	}).fail(function (jqXHR, textStatus, errorThrown){
 		if (DEBUG) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
-		//Show an alert informing that I cannot get info from the user.
-		alert ("Cannot retrieve songs.")
+	})
+	.always(function(){
+	    toappend += "</div>"
+		var $user = $('<tr>').html(toappend);
+	    //Add to the user list
+	    $("#artists").append($user);
+	    return $user;
 
-		//Deselect the user from the list.
 	});
 }
 
@@ -331,12 +337,12 @@ url = '/musicfinder/api/users/' + nickname + '/playlists/' + $(this).text() + "/
 								'data':[]
 	}};
 	var data = {};
-	data.name = "artist";
+	data.name = "byArtist";
 	data.value = $("#artist").text();
 	envelope.template.data.push(data);
 
     var data = {};
-    data.name = "title";
+    data.name = "name";
     data.value = $("#song").text();
 	envelope.template.data.push(data);
 
