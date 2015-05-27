@@ -5,6 +5,7 @@ var DEBUG = true,
 COLLECTIONJSON = "application/vnd.collection+json",
 DEFAULT_DATATYPE = "json",
 ENTRYPOINT = "/musicfinder/api/" //Entry point is getUsers()
+ECHONEST_API = "http://developer.echonest.com/api/v4/artist/hotttnesss?api_key=F4AVFSUHXJALPX6NT&format=json&name="
 /**** END CONSTANTS****/
 
 /**** START RESTFUL CLIENT****/
@@ -173,10 +174,51 @@ function appendArtistToList(url, data) {
         toappend += '<h5>Active from: ' +
 	data[4].value + '</h5>';
 
-	var $user = $('<tr>').html(toappend);
-	//Add to the user list
-	$("#artists").append($user);
-	return $user;
+    return $.ajax({
+		url: ECHONEST_API + data[0].value,
+		dataType:DEFAULT_DATATYPE,
+		//headers: {"Authorization":"admin"}
+	}).done(function (data, textStatus, jqXHR){
+		if (DEBUG) {
+			console.log ("RECEIVED RESPONSE: data:",data,"; textStatus:",textStatus)
+		}
+		var popularity = parseInt(data.response.artist.hotttnesss*100)
+       	   if (popularity < 60)
+            toappend += '<div class="c100 p'+popularity+' small orange">'+
+                        '<span>' + popularity + '%</span>'+
+                    '<div class="slice">'+
+                        '<div class="bar"></div>' +
+                        '<div class="fill"></div>'+
+                    '</div></div>';
+	       else if(popularity < 75)
+            toappend += '<div class="c100 p'+popularity+' small">'+
+                        '<span>' + popularity + '%</span>'+
+                    '<div class="slice">'+
+                        '<div class="bar"></div>' +
+                        '<div class="fill"></div>'+
+                    '</div></div>';
+	       else
+            toappend += '<div class="c100 p'+popularity+' small green">'+
+                        '<span>' + popularity + '%</span>'+
+                    '<div class="slice">'+
+                        '<div class="bar"></div>' +
+                        '<div class="fill"></div>'+
+                    '</div></div>';
+	    var $user = $('<tr>').html(toappend);
+	    //Add to the user list
+	    $("#artists").append($user);
+	    return $user;
+
+
+	}).fail(function (jqXHR, textStatus, errorThrown){
+		if (DEBUG) {
+			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
+		}
+		//Show an alert informing that I cannot get info from the user.
+		alert ("Cannot retrieve songs.")
+
+		//Deselect the user from the list.
+	});
 }
 
 
