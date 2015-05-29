@@ -4,8 +4,6 @@
 var DEBUG = true,
 COLLECTIONJSON = "application/vnd.collection+json",
 HAL = "application/hal+json",
-FORUM_USER_PROFILE = "http://atlassian.virtues.fi:8090/display/PWP/Exercise+4#Exercise4-Forum_User",
-FORUM_MESSAGE_PROFILE = "http://atlassian.virtues.fi:8090/display/PWP/Exercise+4#Exercise4-Forum_Message",
 DEFAULT_DATATYPE = "json",
 ENTRYPOINT = "/musicfinder/api/" //Entry point is getUsers()
 
@@ -129,7 +127,7 @@ function getUser(apiurl) {
 			console.log ("RECEIVED ERROR: textStatus:",textStatus, ";error:",errorThrown)
 		}
 		//Show an alert informing that I cannot get info from the user.
-		alert ("Cannot extract information about this user from the forum service.")
+		alert ("Cannot extract information about this playlist.")
 		//Deselect the user from the list.
 		deselectUser()
 	});

@@ -25,10 +25,7 @@ class ArtistsDbAPITestCase(BaseTestCase):
         print "Testing ", cls.__name__
 
     def test_artists_table_created(self):
-        '''
-        Checks that the table initially contains 20 messages(check
-        forum_data_dump.sql).
-        '''
+
         print '('+self.test_artists_table_created.__name__+')', \
                self.test_artists_table_created.__doc__
         #Create the SQL Statement
@@ -112,16 +109,16 @@ class ArtistsDbAPITestCase(BaseTestCase):
 
     def test_get_artists_specific_genre(self):
         '''
-        Get all artists with genre=Rock.
+        Get all artists with genre containing the word 'rock'.
         '''
         #artists sent from Mystery are 13 and 14
         print '('+self.test_get_artists_specific_genre.__name__+')', \
         self.test_get_artists_specific_genre.__doc__
-        artists = db.get_artists(genre = 'Rock')
+        artists = db.get_artists(genre = 'Indie Rock')
         self.assertEquals(len(artists), 3)
         #artists id are 13 and 14
         for artist in artists:
-            self.assertIn(artist['legalName'], ('Cranberries', 'Muse', 'Mana'))
+            self.assertIn(artist['legalName'], ('Editors', 'Foals', 'Empire of the sun'))
             self.assertNotIn(artist['legalName'], ('Clap! Clap!'))
 
     def test_create_artist(self):

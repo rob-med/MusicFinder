@@ -487,25 +487,31 @@ class MusicDatabase(object):
                 users.append(u)
             return users
 
-    def get_artists(self, genre = None, country = None, language = None):
+    def get_artists(self, name = None, genre = None, country = None, language = None):
         #Create the SQL Statement
         keys_on = 'PRAGMA foreign_keys = ON'
         query = 'SELECT * FROM artists'
           #Nickname restriction
-        if genre is not None or country is not None or language is not None:
-            query+=" where "
+        if genre is not None or country is not None or language is not None or name is not None:
+            query += " where "
             add = 0
         if genre is not None:
-            query += "genre = '%s'" % genre
+            query += "genre like '%%%s%%'" % genre
             add = 1
         if country is not None:
             if add:
                 query += " and "
-            query += "country = '%s'" % country
+            query += "foundingLocation like '%%%s%%'" % country
+            add = 1
         if language is not None:
             if add:
                 query += " and "
-            query += "language = '%s'" % language
+            query += "language like '%%%s%%'" % language
+            add = 1
+        if name is not None:
+            if add:
+                query += " and "
+            query += "legalName like '%%%s%%'" % name
 
         con = sqlite3.connect(self.db_path)
         with con:

@@ -53,13 +53,46 @@ class Artists(Resource):
 
     def get(self):
 
-        artist_db = g.db.get_artists()
+        parameters = request.args
+        country = parameters.get('country',None)
+        language = parameters.get('language', None)
+        name = parameters.get('name', None)
+        genre = parameters.get('genre', None)
+
+        artist_db = g.db.get_artists(name, genre, country, language)
 
         envelope = {}
         collection = {}
         envelope["collection"] = collection
         collection['version'] = "1.0"
         collection['href'] = api.url_for(Artists)
+
+        collection['queries'] = [
+            {'href':api.url_for(Artists),
+             'rel':'search',
+             'prompt':"Search artists",
+             'data' : [
+                {"prompt" : "Search the artists by name",
+                 "name" : "name",
+                 "value" : "",
+                 "required":False},
+                {"prompt" : "Search the artist by genre",
+                 "name" : "genre",
+                 "value" : "",
+                 "required":False},
+                {"prompt" : "Search the artists by country",
+                 "name" : "country",
+                 "value" : "",
+                 "required":False},
+                {"prompt" : "Search the artists by language",
+                 "name" : "language",
+                 "value" : "",
+                 "required":False}
+
+                ]
+            }
+        ]
+
         collection['template'] = {
         "data" : [
             {"prompt" : "", "name" : "legalName", "value" : "", "required":True},

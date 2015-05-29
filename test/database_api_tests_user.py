@@ -134,7 +134,6 @@ class UserDbAPITestCase(BaseTestCase):
         #Check that the users has been really deleted throug a get
         resp2 = db.get_user(self.user1_nickname)
         self.assertIsNone(resp2)
-        #Check that the user does not have associated any message
         resp3 = db.get_playlists(self.user1_nickname)
         self.assertEquals(len(resp3), 0)
 
@@ -184,7 +183,6 @@ class UserDbAPITestCase(BaseTestCase):
         nickname = db.append_user(nickname=self.new_user_nickname, password="ampsy" )
         self.assertIsNotNone(nickname)
         self.assertEquals(nickname, self.new_user_nickname)
-        #Check that the messages has been really modified through a get
         resp2 = db.get_user(nickname)
         self.assertDictContainsSubset(self.new_user,
                                       resp2)

@@ -105,13 +105,34 @@ function handleGetArtist(event) {
 }
 
 function search() {
-	var apiurl = ENTRYPOINT + "artists/";
+	var apiurl = ENTRYPOINT + "artists/?";
 
 	artistInput = $('#artist_input').val();
 	countryInput = $('#country_input').val();
 	languageInput = $('#language_input').val();
 	genreInput = $('#genre_input').val();
-
+    add = 0;
+	if (artistInput){
+	    apiurl+="name=" + artistInput;
+	    add = 1;
+	 }
+	if (countryInput){
+	        if (add)
+	            apiurl += "&";
+		    apiurl+="country=" + countryInput;
+		    add = 1;
+		}
+    if (languageInput){
+	        if (add)
+	            apiurl += "&";
+		    apiurl+="language=" + languageInput;
+		    add = 1;
+		    }
+    if (genreInput){
+	        if (add)
+	            apiurl += "&";
+		    apiurl+="genre=" + genreInput;
+    }
 	return $.ajax({
 		url: apiurl,
 		dataType:DEFAULT_DATATYPE
@@ -128,28 +149,9 @@ function search() {
 		for (var i=0; i < artists.length; i++){
 			artist = artists[i];
 			artist_data = artist.data; 
-			for (var j=0; j<artist_data.length;j++){
-				if (artist_data[j].name=="name"){        
-					artistName = artist_data[j].value;      // Get the name of the artist in the form
-				}
-				if (artist_data[j].name=="genre"){
-					artistGenre = artist_data[j].value;     // Get the genre of the artist in the form
-				}
-				if (artist_data[j].name=="nationality"){
-					artistCountry = artist_data[j].value;   // Get the country of the artist in the form
-				}
-				if (artist_data[j].name=="language"){
-					artistLanguage = artist_data[j].value;  // Get the language of the artist in the form
-				}			
-			}
 
+            appendArtistToList(artist.href, artist_data);
 
-            if ((!genreInput || (artistGenre && artistGenre.toLowerCase().indexOf(genreInput.toLowerCase())>-1))
-            && (!countryInput || (artistCountry && artistCountry.toLowerCase().indexOf(countryInput.toLowerCase())>-1))
-            && (!languageInput || (artistLanguage && artistLanguage.toLowerCase().indexOf(languageInput.toLowerCase())>-1))
-            && (!artistInput || (artistName && artistName.toLowerCase().indexOf(artistInput.toLowerCase())>-1))){
-                appendArtistToList(artist.href, artist_data);
-            }
 
 
 		}

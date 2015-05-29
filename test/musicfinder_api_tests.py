@@ -65,7 +65,6 @@ class ArtistsTestCase (ResourcesAPITestCase):
             artist0 =artists [0]['data'][0] # collection -> items -> data -> name
             self.assertIn('name',artist0)
             href = data['collection']['href']
-            #The collection contains a url to a message
             self.assertIn(resources.api.url_for(resources.Artists),href)
 
 class UsersTestCase (ResourcesAPITestCase):
@@ -117,7 +116,7 @@ class UsersTestCase (ResourcesAPITestCase):
 class ArtistTestCase (ResourcesAPITestCase):
     
     url = '/musicfinder/api/artists/Placebo/'
-    url_wrong = '/forum/api/messages/PlaceboXYZ/'
+    url_wrong = '/musicfinder/api/artists/PlaceboXYZ/'
     artist1 = 'Test'
     artist2 = 'Elio'
     url1 = '/musicfinder/api/artists/%s/'% artist1
@@ -144,21 +143,20 @@ class ArtistTestCase (ResourcesAPITestCase):
     
     def test_wrong_url(self):
         '''
-        Checks that GET Artist return correct status code if given a wrong message
+        Checks that GET Artist return correct status code if given a wrong url
         '''
         resp = self.client.get(self.url_wrong)
         self.assertEquals(resp.status_code, 404)
     
-    def test_get_message(self):
+    def test_get_artist(self):
         '''
         Checks that GET Artist return correct status code and data format
         '''
-        print '('+self.test_get_message.__name__+')', self.test_get_message.__doc__
+        print '('+self.test_get_artist.__name__+')', self.test_get_artist.__doc__
         with resources.app.test_client() as client:
             resp = client.get(self.url)
             self.assertEquals(resp.status_code ,200)
             data = json.loads(resp.data)
-            #The data is formed by links and message
             links = data['_links']
             #Check that the link format is correct
             self.assertEquals(len(links), 3)
@@ -178,21 +176,13 @@ class ArtistTestCase (ResourcesAPITestCase):
         resp2 = self.client.get(self.url2)
         self.assertEquals(resp2.status_code, 200)
 
-    def test_add_reply_wrong_artist(self):
+    def test_add_wrong_artist(self):
         '''
         Try to add an artist sending wrong data
         '''
-        print '('+self.test_add_reply_wrong_artist.__name__+')', self.test_add_reply_wrong_artist.__doc__
+        print '('+self.test_add_wrong_artist.__name__+')', self.test_add_wrong_artist.__doc__
         resp = self.client.post(self.url2, data=json.dumps(self.artist_1_request_wrong), headers={"Content-Type":"application/json"})
         self.assertEquals(resp.status_code, 400)
-
-    def test_add_reply_unexisting_artist(self):
-        '''
-        Try to add a reply to an unexisting artist
-        '''
-        print '('+self.test_add_reply_unexisting_artist.__name__+')', self.test_add_reply_unexisting_artist.__doc__
-        resp = self.client.post(self.url_wrong, data=json.dumps(self.artist_1_request_wrong), headers={"Content-Type":"application/json"})
-        self.assertEquals(resp.status_code, 404)
 
 
 class UserTestCase (ResourcesAPITestCase):
@@ -225,7 +215,7 @@ class UserTestCase (ResourcesAPITestCase):
     
     def test_wrong_url(self):
         '''
-        Checks that GET User return correct status code if given a wrong message
+        Checks that GET User return correct status code if given a wrong url
         '''
         print '('+self.test_wrong_url.__name__+')', self.test_wrong_url.__doc__
         resp = self.client.get(self.url_wrong)
