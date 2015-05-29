@@ -319,14 +319,13 @@ $(function(){
     nickname = processForm();
 	$("#artists").on("click","tr a.artist_link", handleGetArtist);
 	getArtists();
-
+	$("#nickShowed").text(nickname); // Put the nickname just next to the title (in the header with id=nickShowed).
+    $("#nickShowed").attr("href", "playlists.html?" + nickname);
     choosePlaylist(nickname);
     $('#chooseModal').on('show.bs.modal', function (event) {
   var button = $(event.relatedTarget) // Button that triggered the modal
   var song = button.data('song') // Extract info from data-* attributes
   var artist = button.data('artist')
-  // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-  // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
   var modal = $(this)
   modal.find('#artist').text(artist)
   modal.find('#song').text(song)
