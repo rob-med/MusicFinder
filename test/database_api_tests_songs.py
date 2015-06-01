@@ -25,7 +25,7 @@ class SongsDbAPITestCase(BaseTestCase):
     def test_songs_table_created(self):
         '''
         Checks that the table initially contains 20 songs(check
-        forum_data_dump.sql).
+        musicfinder_data_dump.sql).
         '''
         print '('+self.test_songs_table_created.__name__+')', \
                self.test_songs_table_created.__doc__

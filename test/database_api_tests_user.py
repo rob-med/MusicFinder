@@ -35,7 +35,7 @@ class UserDbAPITestCase(BaseTestCase):
     def test_users_table_created(self):
         '''
         Checks that the table initially contains 5 users (check 
-        forum_data_dump.sql)
+        musicfinder_data_dump.sql)
         '''
         print '('+self.test_users_table_created.__name__+')', \
               self.test_users_table_created.__doc__

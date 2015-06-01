@@ -130,7 +130,9 @@ class Artists(Resource):
     def post(self):
         input = request.get_json(force=True)
         if not input:
-            abort(415)
+            return create_error_response(415, "Unsupported Media Type",
+                                         "Use a JSON compatible format",
+                                         "Artists")
 
 
         try:
@@ -261,7 +263,9 @@ class Songs(Resource):
     def post(self, artist):
         input = request.get_json(force=True)
         if not input:
-            abort(415)
+            return create_error_response(415, "Unsupported Media Type",
+                                         "Use a JSON compatible format",
+                                         "Songs")
 
         #It throws a BadRequest exception, and hence a 400 code if the JSON is
         #not wellformed
@@ -432,7 +436,9 @@ class Playlist(Resource):
     def post(self, nickname, title):
         input = request.get_json(force=True)
         if not input:
-            abort(415)
+            return create_error_response(415, "Unsupported Media Type",
+                                         "Use a JSON compatible format",
+                                         "Playlist")
 
         #It throws a BadRequest exception, and hence a 400 code if the JSON is
         #not wellformed
@@ -511,9 +517,13 @@ class Playlist(Resource):
 
             #CHECK THAT DATA RECEIVED IS CORRECT
             if not dictionary.get("name", None) or not dictionary.get("author", None):
-                abort(400)
+             return create_error_response(400, "Wrong request format",
+                                         "Be sure you include playlists's title and author",
+                                         "Playlist")
         except:
-            abort(400)
+             return create_error_response(400, "Wrong request format",
+                                         "Be sure you include playlists's title and author",
+                                         "Playlist")
         else:
             if not g.db.modify_playlist(nickname, title, dictionary.get("author"), dictionary.get("name"), dictionary.get("created_on")):
                 return NotFound()
@@ -628,10 +638,10 @@ class Users(Resource):
     def post(self):
         input = request.get_json(force=True)
         if not input:
-            abort(415)
+            return create_error_response(415, "Unsupported Media Type",
+                                         "Use a JSON compatible format",
+                                         "Users")
 
-        #It throws a BadRequest exception, and hence a 400 code if the JSON is
-        #not wellformed
         try:
             data = input['template']['data']
 
@@ -645,11 +655,11 @@ class Users(Resource):
             if not dictionary.get("nickname", None) or not dictionary.get("password", None):
                 return create_error_response(400, "Wrong request format",
                                              "Be sure you include user's nickname and password",
-                                             "users")
+                                             "Users")
         except:
             return create_error_response(400, "Wrong request format",
                                          "Be sure you include user's nickname and password",
-                                         "users")
+                                         "Users")
 
         #aid = g.db.create_user(nickname, password, age=None, country=None, gender=None)
         aid = g.db.create_user(dictionary.get("nickname"), dictionary.get("password"), dictionary.get("age", None), dictionary.get("nationality", None), dictionary.get("gender", None))
@@ -750,7 +760,9 @@ class User(Resource):
                 dictionary[tt] = d['value']
 
         except:
-            abort(400)
+             return create_error_response(400, "Wrong request format",
+                                         "Be sure you include playlists's title and author",
+                                         "Playlist")
         else:
             if not g.db.modify_user(nickname, dictionary.get("age", None), dictionary.get("nationality", None), dictionary.get("gender", None)):
                 return NotFound()
@@ -861,7 +873,6 @@ api.add_resource(Playlist_songs, '/musicfinder/api/users/<nickname>/playlists/<t
 #Start the application
 #DATABASE SHOULD HAVE BEEN POPULATED PREVIOUSLY
 if __name__ == '__main__':
-    #Debug True activates automatic code reloading and improved error messages
     app.run(debug=True)
 				 
 

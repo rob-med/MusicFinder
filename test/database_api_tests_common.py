@@ -13,16 +13,9 @@ class BaseTestCase(unittest.TestCase):
     '''
    
     def setUp(self):
-        '''
-        Clean the database (in SQLite you can remove the whole database file) 
-        and create a new one for loading the inital values. 
-        '''
-        #Be sure that there is no database.
-        #This specially is useful if the clean process was not success.
         if os.path.exists(db_path):
             os.remove(db_path)
-        #This method load the initial values from forum_data_dump.sql
-        #It creates the database if it does not exist. 
+
         db.load_init_values()
 
     def tearDown(self):
