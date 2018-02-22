@@ -5,17 +5,19 @@ This application is mainly aimed for private users, who wish to discover new son
 
 ## Installation
 
-SQLite is used to store data. The data can be found in the folder db (Python sqlite3: http://docs.python.org/2/library/sqlite3.html).
-The project has been built using Python; the backend relies on the Flask-RESTful framework ( http://flask-restful.readthedocs.org/en/latest/quickstart.html).
+SQLite is used to store data. The data can be found in the folder _db_ ([Python sqlite3](http://docs.python.org/2/library/sqlite3.html)).
+The project has been built using Python; the backend relies on the [Flask-RESTful framework](http://flask-restful.readthedocs.org/en/latest/quickstart.html).
 
 
 ## Getting started
 
-To run the project (both client and server), from the main folder (path/musicfinder/), it's sufficient to run the command:
+To run the project (both client and server), from the main folder (_path/musicfinder/_), it's sufficient to run the command:
 
 > python musicfinder.py
 
-Once the server has started, the log message "Running on http://localhost:5000" will appear, and it will be possible to interact with the web-page at the following URL: "http://localhost:5000/musicfinder_admin/ui.html" .
+Once the server has started, the log message "Running on http://localhost:5000" will appear, and it will be possible to interact with the web-page at the following URL: 
+
+> http://localhost:5000/musicfinder_admin/ui.html
 
 ## Testing the code
 
@@ -37,8 +39,8 @@ To test the user REST-ful API use the following command from the main folder:
 
 ## External dependencies
 
-The GUI uses the library JQuery (v 1.11.2), that can be found in the folder "musicfinder/musicfinder_admin/static/".
-The GUI uses the framework Bootstrap (v 3.3.4) located in the folder "musicfinder/musicfinder_admin/static/bootstrap" (the folder contains the css, fonts and javascript functions in the relative sub-folders).
+The GUI uses the library JQuery (v 1.11.2), that can be found in the folder _musicfinder/musicfinder_admin/static/_.
+The GUI uses the framework Bootstrap (v 3.3.4) located in the folder _musicfinder/musicfinder_admin/static/bootstrap_ (the folder contains the css, fonts and javascript functions in the relative sub-folders).
 [_unittest_](http://docs.python.org/2/library/unittest.html) was used for testing .
 
 ## RESTful API endpoints
