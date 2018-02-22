@@ -49,18 +49,18 @@ The GUI uses the framework Bootstrap (v 3.3.4) located in the folder _musicfinde
 
 - **Artists** = /musicfinder/api/artists/
 
-- **Artist** = /musicfinder/api/artists/<artist>/
+- **Artist** = /musicfinder/api/artists/_artist_name_/
 
-- **Songs** = /musicfinder/api/artists/<artist>/songs/
+- **Songs** = /musicfinder/api/artists/_artist_name_/songs/
 
-- **Song** = /musicfinder/api/artists/<artist>/songs/<title>
+- **Song** = /musicfinder/api/artists/_artist_name_/songs/_song_title_
 
 - **Users** = /musicfinder/api/users/
 
-- **User** = /musicfinder/api/users/<nickname>/
+- **User** = /musicfinder/api/users/_user_name_/
 
-- **User_playlists** = /musicfinder/api/users/<nickname>/playlists/
+- **User_playlists** = /musicfinder/api/users/_user_name_/playlists/
 
-- **Playlist** = /musicfinder/api/users/<nickname>/playlists/<title>/
+- **Playlist** = /musicfinder/api/users/_user_name_/playlists/_playlist_title_/
 
-- **Playlist_songs** = /musicfinder/api/users/<nickname>/playlists/<title>/songs/
+- **Playlist_songs** = /musicfinder/api/users/_user_name_/playlists/_playlist_title_/songs/
